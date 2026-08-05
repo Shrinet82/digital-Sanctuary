@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink: #191323;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: #FBF2E4;
+    background-image: radial-gradient(rgba(25, 19, 35, 0.08) 1.3px, transparent 1.3px);
+    background-size: 26px 26px;
+    color: #191323;
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  ::selection {
+    background: #FFD84D;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
+
+@layer components {
+  /* Candy neo-brutalist primitives — the shared design language */
+  .ds-card {
+    @apply bg-surface border-2.5 border-ink rounded-[22px] shadow-pop p-6;
+  }
+  .ds-btn {
+    @apply inline-flex items-center gap-2 border-2.5 border-ink rounded-[14px] px-5 py-3 font-bold shadow-pop transition-transform;
+  }
+  .ds-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 var(--ink);
+  }
+  .ds-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--ink);
+  }
+  .ds-btn-primary {
+    @apply bg-violet text-white;
+  }
+  .ds-btn-ghost {
+    @apply bg-yellow text-ink;
+  }
+  .ds-pill {
+    @apply inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full border-2 border-ink;
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .ds-hl {
+    background-image: linear-gradient(transparent 55%, #FFD84D 55%, #FFD84D 92%, transparent 92%);
+    padding: 0 0.1em;
+  }
+}
