@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { UrgentHelpButton } from "@/components/UrgentHelpButton";
 
 export default function Home() {
@@ -12,6 +13,12 @@ export default function Home() {
           Digital Sanctuary
         </div>
         <div className="flex-1" />
+        <Link
+          href="/login"
+          className="text-sm font-bold text-ink-soft no-underline hover:underline underline-offset-2"
+        >
+          Sign in
+        </Link>
         <UrgentHelpButton />
       </header>
 
@@ -30,8 +37,12 @@ export default function Home() {
         </p>
 
         <div className="flex gap-3 flex-wrap mt-7">
-          <button className="ds-btn ds-btn-primary">Start a check-in →</button>
-          <button className="ds-btn ds-btn-ghost">Explore the toolkit</button>
+          <Link href="/signup" className="ds-btn ds-btn-primary no-underline">
+            Create an account →
+          </Link>
+          <Link href="/login" className="ds-btn ds-btn-ghost no-underline">
+            Sign in
+          </Link>
         </div>
       </section>
 

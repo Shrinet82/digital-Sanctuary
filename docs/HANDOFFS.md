@@ -11,32 +11,85 @@ lands here. Check items off as you complete them.
 
 ---
 
-## Phase 0 — Foundations
+## Environment reference
+
+| Thing | Value |
+|-------|-------|
+| Live app | https://digital-sanctuary-black.vercel.app |
+| GitHub | `Shrinet82/digital-Sanctuary` (`main`) |
+| Supabase account | `Supabase 2` |
+| Supabase org | `Mad82-ops's Org` (`askjtjjacprsiylfzwwf`) |
+| Supabase project | `digital-sanctuary` — ref `lpsyncvegwcycgmgxiui`, region `ap-south-1` (Mumbai) |
+| Project API URL | `https://lpsyncvegwcycgmgxiui.supabase.co` |
+
+---
+
+## Phase 0 — Foundations ✅
 
 - [x] ✅ **Connect the repo to Vercel.** Done — live at
       https://digital-sanctuary-black.vercel.app (auto-deploys on push to `main`).
-- [ ] ⏳ **Add Vercel env vars** once the Supabase project exists (see below):
-      `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
-      `SUPABASE_SERVICE_ROLE_KEY`. Values come from Supabase → Settings → API.
-- [ ] 🤖 Agent: create the Supabase project in the `Mad82-ops` org (next kickoff step).
-- [ ] 🤖 Agent: write SQL migrations under `supabase/migrations/`.
 
-## Phase 1 — Accounts (simple email first)
+## Phase 1 — Database + Email Auth
 
-- [ ] ⏳ In Supabase → Authentication → Providers, confirm **Email** is enabled
-      (it is by default). Decide whether to require email confirmation for now.
-- [ ] 🔜 (Later) **Google OAuth** — deferred. When we add it: create an OAuth
-      client in Google Cloud Console and paste the client id/secret into
-      Supabase → Auth → Providers → Google. Not needed yet.
+- [x] 🤖 SQL migrations written &amp; applied (`0001_core_schema`, `0002_harden_functions`).
+- [x] 🤖 Supabase project created in `Mad82-ops's Org`.
+- [x] 🤖 Verified: 4 tables, RLS on all, profile auto-created on signup,
+      cross-user writes rejected (`42501`), security advisor clean.
+- [x] 🤖 Auth pages + middleware + dashboard shell built.
+
+### ⏳ 1. Add the Vercel environment variables — **required for auth to work live**
+
+Vercel → your project → **Settings → Environment Variables**. Add both, for all
+environments (Production, Preview, Development), then **redeploy**:
+
+```
+NEXT_PUBLIC_SUPABASE_URL = https://lpsyncvegwcycgmgxiui.supabase.co
+
+NEXT_PUBLIC_SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxwc3luY3ZlZ3djeWNnbWd4aXVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5MTYyMTksImV4cCI6MjEwMTQ5MjIxOX0.LURO9LbLJFe1LHasvBZEVs0F0O-nwTOIM1QI9eOEzWQ
+```
+
+> The anon key is designed to be public — it's safe in the browser because
+> Row-Level Security is what actually protects the data. The **service role
+> key** is the secret one; we don't need it yet.
+
+### ⏳ 2. Decide: email confirmation on or off?
+
+Right now Supabase requires users to confirm their email before they can sign in,
+and the built-in email sender is rate-limited (a few per hour) — which makes
+testing slow.
+
+**Recommended for now:** Supabase → **Authentication → Sign In / Providers →
+Email** → turn **"Confirm email" OFF**. Signup then logs you straight in.
+Turn it back on before any real launch (or wire a proper email provider).
+
+### ⏳ 3. Set the Site URL for auth redirects
+
+Supabase → **Authentication → URL Configuration** → set
+**Site URL** to `https://digital-sanctuary-black.vercel.app`
+(add `http://localhost:3000` under Redirect URLs for local dev).
+
+### 🔜 Later — Google OAuth (deferred)
+
+When we add it: create an OAuth client in Google Cloud Console, paste the client
+id/secret into Supabase → Auth → Providers → Google. Not needed yet.
+
+---
 
 ## Local development (for your IDE)
 
 ```bash
-npm install          # install dependencies
-cp .env.example .env.local   # then fill in real Supabase values
-npm run dev          # http://localhost:3000
-npm run build        # production build check
-npm run typecheck    # TypeScript check
+npm install
+cp .env.example .env.local     # then paste the two values above
+npm run dev                    # http://localhost:3000
+npm run build                  # production build check
+npm run typecheck              # TypeScript check
 ```
 
 > Never commit `.env.local` or real keys — `.gitignore` already excludes them.
+
+## What to QA once env vars are set
+
+1. Visit `/signup`, create an account → you should land on `/dashboard`.
+2. Sign out, sign back in at `/login`.
+3. Visit `/dashboard` while signed out → should redirect to `/login`.
+4. Check Supabase → Table Editor → `profiles` — your row should be there.
