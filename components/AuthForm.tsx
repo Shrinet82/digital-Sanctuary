@@ -22,6 +22,30 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
   const action = isSignUp ? signUp : signIn;
   const [state, formAction] = useFormState<AuthState, FormData>(action, {});
 
+  // Signup succeeded but needs email confirmation — show a calm, clear next step.
+  if (state.notice) {
+    return (
+      <div className="ds-card text-center">
+        <span className="text-4xl">📬</span>
+        <h2 className="text-2xl mt-3 mb-2">Check your email</h2>
+        <p className="text-ink-soft text-[15px] mb-4">{state.notice}</p>
+        <div className="rounded-xl border-2 border-dashed border-ink bg-white/70 p-4 text-sm text-ink-soft text-left">
+          <p className="m-0">
+            Click the link in that email and you&apos;ll be brought straight
+            back here, signed in. If it doesn&apos;t arrive in a minute or two,
+            check your spam folder.
+          </p>
+        </div>
+        <Link
+          href="/login"
+          className="ds-btn ds-btn-ghost w-full justify-center no-underline mt-4"
+        >
+          Back to sign in
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="ds-card">
       <form action={formAction} className="space-y-4">
@@ -80,15 +104,6 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
             {state.error}
           </p>
         )}
-        {state.notice && (
-          <p
-            role="status"
-            className="text-sm font-semibold bg-mint border-2 border-ink rounded-xl px-4 py-3"
-          >
-            {state.notice}
-          </p>
-        )}
-
         <SubmitButton label={isSignUp ? "Create my account →" : "Sign in →"} />
       </form>
 

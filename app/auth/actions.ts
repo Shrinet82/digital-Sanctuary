@@ -63,8 +63,7 @@ export async function signUp(
   // When email confirmation is on, there's no session yet.
   if (!data.session) {
     return {
-      notice:
-        "Check your inbox to confirm your email, then come back and sign in.",
+      notice: `We've sent a confirmation link to ${email}.`,
     };
   }
 

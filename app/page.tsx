@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { UrgentHelpButton } from "@/components/UrgentHelpButton";
+import { SessionCatcher } from "@/components/SessionCatcher";
 
 export default function Home() {
   return (
     <main className="max-w-5xl mx-auto px-6">
+      <SessionCatcher />
       {/* Top bar */}
       <header className="flex items-center gap-4 py-4">
         <div className="flex items-center gap-3 font-display font-extrabold text-lg">
