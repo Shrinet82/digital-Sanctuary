@@ -13,8 +13,8 @@ lands here. Check items off as you complete them.
 
 ## Phase 0 — Foundations
 
-- [ ] ⏳ **Connect the repo to Vercel.** Import `Shrinet82/digital-Sanctuary`,
-      framework preset = Next.js, deploy. This gives us the live auto-deploy URL.
+- [x] ✅ **Connect the repo to Vercel.** Done — live at
+      https://digital-sanctuary-black.vercel.app (auto-deploys on push to `main`).
 - [ ] ⏳ **Add Vercel env vars** once the Supabase project exists (see below):
       `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
       `SUPABASE_SERVICE_ROLE_KEY`. Values come from Supabase → Settings → API.
