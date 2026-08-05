@@ -24,6 +24,15 @@ type BaseStep = {
   prompt?: string;
   /** Smaller helper text under the prompt. */
   help?: string;
+  /**
+   * Tappable example answers.
+   *
+   * A blank box is the point where people give up — especially when anxious or
+   * low. Examples are scaffolding: tapping one drops it into the field so it can
+   * be edited rather than written from nothing. They are never saved as-is
+   * unless the user leaves them.
+   */
+  examples?: string[];
   /** Skippable steps show a "Skip this" control. */
   optional?: boolean;
   /**
@@ -94,6 +103,19 @@ export type Step =
   | SafetyGateStep
   | SummaryStep;
 
+/**
+ * What to offer after the worksheet, so finishing doesn't land in a void.
+ * Chosen by a fixed threshold on the final rating — never by a model.
+ */
+export type NextStep = {
+  /** Compare against the second key of the summary's `compare` pair. */
+  whenRatingAtOrAbove?: number;
+  moduleId: string;
+  label: string;
+  /** Plain-language reason, shown to the user. */
+  because: string;
+};
+
 export type WorksheetTemplate = {
   id: string;
   version: number;
@@ -104,6 +126,8 @@ export type WorksheetTemplate = {
   /** Shown behind the "Why this may help" disclosure. */
   why: string;
   steps: Step[];
+  /** Optional follow-on suggestions, evaluated top-down. */
+  nextSteps?: NextStep[];
 };
 
 export type AnswerValue = string | number | string[] | null;

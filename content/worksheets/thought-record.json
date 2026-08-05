@@ -1,17 +1,23 @@
 {
   "id": "thought-record",
-  "version": 1,
+  "version": 2,
   "name": "Thought Record",
   "framework": "CBT",
   "condition": "Anxiety · low mood",
   "lede": "Catch the thought and look at it in daylight. One prompt at a time — skip anything that doesn't fit.",
-  "why": "Writing a thought down separates having it from believing it. Noting where you were, what your body did, and what you told yourself turns a fog into something specific — and specific things can be worked with. Adapted in structure from standard CBT thought diaries; the prompts are our own and deliberately non-judgemental.",
+  "why": "Writing a thought down separates having it from believing it. Noting where you were, what your body did, what you told yourself, and which pattern it fits turns a fog into something specific — and specific things can be worked with. Adapted in structure from standard CBT thought diaries; the prompts are our own and deliberately non-judgemental.",
   "steps": [
     {
       "type": "longtext",
       "key": "situation",
       "prompt": "Where were you, and what was happening?",
-      "placeholder": "e.g. Sunday night, alone, scrolling on my phone"
+      "placeholder": "e.g. Sunday night, alone, scrolling on my phone",
+      "examples": [
+        "Sunday night, alone, scrolling on my phone",
+        "At work, just before a meeting",
+        "In bed, couldn't sleep",
+        "After a conversation that didn't go well"
+      ]
     },
     {
       "type": "multi_choice",
@@ -27,7 +33,8 @@
         "Hot or sweaty",
         "Foggy head",
         "Stomach knot",
-        "Heavy / slowed down"
+        "Heavy / slowed down",
+        "Jaw or shoulders clenched"
       ]
     },
     {
@@ -42,7 +49,32 @@
       "key": "thought",
       "prompt": "What went through your mind?",
       "help": "Word for word if you can. Just catching it counts — you don't have to argue with it.",
-      "placeholder": "e.g. I'm falling behind everyone"
+      "placeholder": "e.g. I'm falling behind everyone",
+      "examples": [
+        "I'm falling behind everyone",
+        "They must think I'm useless",
+        "I can't handle this",
+        "Nothing I do makes a difference",
+        "It's going to go badly and it'll be my fault"
+      ]
+    },
+    {
+      "type": "multi_choice",
+      "key": "thinking_styles",
+      "prompt": "Does that thought fit any of these patterns?",
+      "help": "Naming the pattern is often where it loosens. Not a criticism — just useful information.",
+      "optional": true,
+      "options": [
+        "Catastrophising — jumping to the worst outcome",
+        "Mind reading — assuming I know what they think",
+        "All-or-nothing — total success or total failure",
+        "Overgeneralising — one time becomes always",
+        "Personalising — making it about me",
+        "Should statements — I ought to be handling this",
+        "Emotional reasoning — it feels true, so it is",
+        "Filtering — only the bad part sticks",
+        "Labelling — calling myself a name"
+      ]
     },
     {
       "type": "single_choice",
@@ -53,15 +85,23 @@
         "What would I tell a friend?",
         "What else could explain this?",
         "What can I actually control?",
-        "Is this a fact, or a feeling?"
+        "Is this a fact, or a feeling?",
+        "What would I think about this in a week?"
       ]
     },
     {
       "type": "longtext",
       "key": "wider_view",
       "prompt": "A slightly wider way to hold it",
-      "help": "It doesn't have to be convincing. A crack of light is enough.",
-      "optional": true
+      "help": "It doesn't have to be convincing. A crack of light is enough — tap an example if you're stuck.",
+      "optional": true,
+      "examples": [
+        "I'm comparing my worst day to other people's best",
+        "I don't have evidence for what they're thinking",
+        "This is a feeling, and feelings pass",
+        "One hard moment isn't the whole story",
+        "I'd be kinder about this if a friend told me"
+      ]
     },
     {
       "type": "scale",
@@ -74,6 +114,19 @@
       "type": "summary",
       "compare": ["intensity_before", "intensity_after"],
       "aiRecap": true
+    }
+  ],
+  "nextSteps": [
+    {
+      "whenRatingAtOrAbove": 6,
+      "moduleId": "ground-and-settle",
+      "label": "Ground & Settle",
+      "because": "Still running high. A short paced-breathing practice asks very little and often takes the edge off."
+    },
+    {
+      "moduleId": "one-small-action",
+      "label": "One Small Action",
+      "because": "You've named it. One small action is a good way to not let it sit."
     }
   ]
 }

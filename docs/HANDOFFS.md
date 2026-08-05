@@ -74,12 +74,12 @@ Supabase → **Authentication → URL Configuration** → set
 - [x] 🤖 `WorksheetPlayer` renders any template; 4 worksheets shipped as JSON.
 - [x] 🤖 Verified: adding a JSON file creates a new worksheet with zero code changes.
 
-### ⏳ Recommended: turn on leaked-password protection
+### 🚫 Leaked-password protection — not available on Free
 
-Supabase's advisor flagged this, and for an app holding mental-health journals
-it's worth two clicks: Supabase → **Authentication → Policies (Password
-settings)** → enable **"Prevent use of leaked passwords"**. It checks new
-passwords against HaveIBeenPwned so people can't reuse a breached one.
+Supabase's advisor suggests it, but the HaveIBeenPwned check is a **Pro-plan
+feature**. Deliberately parked: sign-up hardening is not the priority while the
+product itself is being built. Revisit if/when the project moves to Pro, or
+before any real public launch.
 
 ### 🔜 Later — Google OAuth (deferred)
 

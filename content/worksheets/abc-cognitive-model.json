@@ -1,30 +1,42 @@
 {
   "id": "abc-cognitive-model",
-  "version": 1,
+  "version": 2,
   "name": "The ABC Model",
   "framework": "CBT",
   "condition": "Anxiety · low mood",
   "lede": "A thought isn't a fact. We'll look at one moment together — what happened, what you made of it, and what that led to.",
-  "why": "Separating the event (A) from the belief about it (B) from what followed (C) makes visible something that usually happens too fast to notice. Once a thought is written down, it stops being the air you're breathing and becomes something you can look at. This is the standard ABC cognitive model used across CBT self-help; the wording here is our own.",
+  "why": "Separating the event (A) from the belief about it (B) from what followed (C) makes visible something that usually happens too fast to notice. Naming the thinking pattern matters as much as naming the thought — most of us run the same two or three patterns, and spotting yours is where the loosening starts. This is the standard ABC cognitive model with the unhelpful-thinking-styles step used in CBT self-help; the wording here is our own.",
   "steps": [
     {
       "type": "info",
       "title": "How this works",
-      "body": "Five short prompts, one at a time. Skip anything that doesn't fit, and leave whenever you like — nothing saves until the end."
+      "body": "Short prompts, one at a time. Where there's a blank box you'll find examples you can tap and edit — you never have to start from nothing. Skip anything that doesn't fit, and nothing saves until the end."
     },
     {
       "type": "longtext",
       "key": "a_event",
       "prompt": "A — Activating event: what happened?",
       "help": "Just the facts, like a camera would see it.",
-      "placeholder": "e.g. I opened my inbox on Sunday night and saw a message from my manager"
+      "placeholder": "e.g. I opened my inbox on Sunday night and saw a message from my manager",
+      "examples": [
+        "I saw a message from my manager and didn't open it",
+        "A friend didn't reply to my text all day",
+        "I made a mistake in front of other people",
+        "I woke up already dreading the day"
+      ]
     },
     {
       "type": "longtext",
       "key": "b_belief",
       "prompt": "B — Belief: what went through your mind?",
       "help": "Word for word if you can. You don't have to argue with it.",
-      "placeholder": "e.g. If I got this wrong, everything falls apart"
+      "placeholder": "e.g. If I got this wrong, everything falls apart",
+      "examples": [
+        "If I got this wrong, everything falls apart",
+        "They're annoyed with me and I've ruined it",
+        "I always mess this up",
+        "I can't cope with this"
+      ]
     },
     {
       "type": "scale",
@@ -34,11 +46,35 @@
       "highLabel": "Completely"
     },
     {
+      "type": "multi_choice",
+      "key": "thinking_styles",
+      "prompt": "Does that thought fit any of these patterns?",
+      "help": "Most of us run the same two or three. Spotting yours isn't self-criticism — it's the useful bit. Tap any that fit.",
+      "optional": true,
+      "options": [
+        "Catastrophising — jumping to the worst outcome",
+        "Mind reading — assuming I know what they think",
+        "All-or-nothing — total success or total failure",
+        "Overgeneralising — one time becomes always",
+        "Personalising — making it about me",
+        "Should statements — I ought to be handling this",
+        "Emotional reasoning — it feels true, so it is",
+        "Filtering — only the bad part sticks",
+        "Labelling — calling myself a name"
+      ]
+    },
+    {
       "type": "longtext",
       "key": "c_consequence",
       "prompt": "C — Consequence: how did you feel, and what did you do?",
       "help": "Feelings and actions both count.",
-      "placeholder": "e.g. Chest went tight, I closed the laptop and avoided it all evening"
+      "placeholder": "e.g. Chest went tight, I closed the laptop and avoided it all evening",
+      "examples": [
+        "Chest went tight and I avoided it all evening",
+        "I went quiet and stopped replying to people",
+        "I over-explained and apologised too much",
+        "I couldn't settle, kept checking my phone"
+      ]
     },
     {
       "type": "single_choice",
@@ -49,16 +85,24 @@
       "options": [
         "What would I tell a friend in this exact situation?",
         "What else could explain this?",
-        "What part of this can I actually control?"
+        "What part of this can I actually control?",
+        "What would I think about this in a week?"
       ]
     },
     {
       "type": "longtext",
       "key": "wider_view",
       "prompt": "So — what's a slightly wider way to hold it?",
-      "help": "Not forced positivity. Just a little more room.",
+      "help": "Not forced positivity. Just a little more room. Tap an example if you're stuck.",
       "optional": true,
-      "placeholder": "e.g. One message isn't the whole story; I can read it properly tomorrow"
+      "placeholder": "e.g. One message isn't the whole story; I can read it properly tomorrow",
+      "examples": [
+        "One message isn't the whole story — I can read it properly tomorrow",
+        "I don't actually know what they're thinking yet",
+        "This is one moment, not the whole pattern",
+        "I'd tell a friend this was understandable, not a failure",
+        "The part I control is what I do next, not what already happened"
+      ]
     },
     {
       "type": "scale",
@@ -71,6 +115,19 @@
       "type": "summary",
       "compare": ["belief_before", "belief_after"],
       "aiRecap": true
+    }
+  ],
+  "nextSteps": [
+    {
+      "whenRatingAtOrAbove": 6,
+      "moduleId": "ground-and-settle",
+      "label": "Ground & Settle",
+      "because": "That thought is still loud. Sometimes the body needs settling before the mind will follow — this takes about 90 seconds."
+    },
+    {
+      "moduleId": "one-small-action",
+      "label": "One Small Action",
+      "because": "You've done the looking-at-it part. One small action is often what makes it stick."
     }
   ]
 }

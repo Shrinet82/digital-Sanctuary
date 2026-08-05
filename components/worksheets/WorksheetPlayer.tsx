@@ -102,22 +102,58 @@ export function WorksheetPlayer({
 
   // ---------- saved ----------
   if (saved) {
+    // Pick a follow-on by fixed threshold on the final rating — never a model.
+    const summary = template.steps.find((s) => s.type === "summary") as
+      | SummaryStep
+      | undefined;
+    const finalKey = summary?.compare?.[1];
+    const finalRating =
+      finalKey && typeof answers[finalKey] === "number"
+        ? (answers[finalKey] as number)
+        : null;
+
+    const next =
+      template.nextSteps?.find(
+        (n) =>
+          n.whenRatingAtOrAbove === undefined ||
+          (finalRating !== null && finalRating >= n.whenRatingAtOrAbove)
+      ) ?? null;
+
     return (
-      <div className="ds-card text-center">
-        <span className="text-4xl">✓</span>
-        <h2 className="text-2xl mt-2 mb-1">Saved privately</h2>
-        <p className="text-ink-soft text-[15px] mb-5">
-          That&apos;s yours alone. Well caught.
-        </p>
-        <button
-          onClick={() => {
-            router.push("/dashboard");
-            router.refresh();
-          }}
-          className="ds-btn ds-btn-primary"
-        >
-          Back to dashboard
-        </button>
+      <div className="ds-card">
+        <div className="text-center">
+          <span className="text-4xl">✓</span>
+          <h2 className="text-2xl mt-2 mb-1">Saved privately</h2>
+          <p className="text-ink-soft text-[15px]">
+            That&apos;s yours alone. Well caught.
+          </p>
+        </div>
+
+        {next && (
+          <div className="mt-6 rounded-[16px] border-2.5 border-ink bg-gradient-to-br from-violet-soft to-coral-soft p-5">
+            <span className="ds-pill bg-white">🧮 suggested next</span>
+            <b className="block text-lg font-display mt-2.5">{next.label}</b>
+            <p className="text-sm text-ink-soft mt-1.5 mb-4">{next.because}</p>
+            <button
+              onClick={() => router.push(`/modules/${next.moduleId}`)}
+              className="ds-btn ds-btn-primary"
+            >
+              {next.label} →
+            </button>
+          </div>
+        )}
+
+        <div className="text-center mt-6">
+          <button
+            onClick={() => {
+              router.push("/dashboard");
+              router.refresh();
+            }}
+            className="text-sm font-bold text-ink-faint underline underline-offset-2"
+          >
+            {next ? "Not now — back to dashboard" : "Back to dashboard"}
+          </button>
+        </div>
       </div>
     );
   }
@@ -238,6 +274,7 @@ function StepView({
               className="w-full border-2.5 border-ink rounded-[14px] px-4 py-3 bg-surface"
             />
           )}
+          <Examples step={s} onPick={(text) => onSet(s.key, text)} />
         </div>
       );
     }
@@ -446,6 +483,53 @@ function StepView({
     default:
       return null;
   }
+}
+
+/**
+ * Tappable example answers.
+ *
+ * The blank box is where people give up. Tapping an example fills the field so
+ * it can be edited instead of written from nothing — scaffolding, not an answer.
+ */
+function Examples({
+  step,
+  onPick,
+}: {
+  step: Step;
+  onPick: (text: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  if (!step.examples?.length) return null;
+
+  return (
+    <div className="mt-3">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="text-sm font-bold text-violet-deep underline underline-offset-2"
+      >
+        {open ? "Hide examples" : "💡 Stuck? See examples"}
+      </button>
+      {open && (
+        <div className="mt-3 space-y-2">
+          <p className="text-xs text-ink-faint m-0">
+            Tap one to drop it in, then change it to fit you.
+          </p>
+          {step.examples.map((ex) => (
+            <button
+              key={ex}
+              onClick={() => {
+                onPick(ex);
+                setOpen(false);
+              }}
+              className="block w-full text-left border-2 border-ink rounded-xl px-4 py-2.5 text-sm bg-surface-2 shadow-pop-sm transition-transform hover:-translate-y-px"
+            >
+              “{ex}”
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function Prompt({ step }: { step: Step }) {
