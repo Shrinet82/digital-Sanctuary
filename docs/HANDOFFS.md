@@ -86,6 +86,34 @@ before any real public launch.
 When we add it: create an OAuth client in Google Cloud Console, paste the client
 id/secret into Supabase → Auth → Providers → Google. Not needed yet.
 
+## Phase 5 — Substance-use vault + full module set ✅
+
+- [x] 🤖 Consent-gated vault (`su_trigger_map`, `su_mooring_anchors`,
+      `su_lapse_review`) — RLS requires an **active consent row**, verified:
+      write without consent is rejected, revoking hides data, re-granting
+      restores it intact.
+- [x] 🤖 `local_resources` directory + Safety Gateway (no consent needed, so
+      nobody in a hard moment hits a permissions screen).
+- [x] 🤖 All 11 modules live with condition filters on the dashboard.
+- [x] 🤖 `delete_substance_use_data()` erases just the vault, leaving the
+      account intact — verified.
+
+### ⏳ Verify the crisis resources for your region
+
+I seeded **India** only, each row sourced and dated:
+
+| Service | Contact | Source |
+|---|---|---|
+| National emergency | **112** | india.gov.in |
+| Tele-MANAS (MoHFW) | **14416** / 1-800-891-4416 | telemanas.mohfw.gov.in |
+| KIRAN (MoSJE) | **1800-599-0019** | socialjustice.gov.in |
+
+**Please sanity-check these yourself before anyone else uses the app** — a wrong
+crisis number is the most harmful bug this product could ship. If you want other
+regions, send me verified numbers with an official source URL and I'll add them.
+Until a region has verified rows, the Safety Gateway deliberately shows nothing
+rather than guessing.
+
 ---
 
 ## Local development (for your IDE)

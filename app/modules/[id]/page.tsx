@@ -1,56 +1,79 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
+import { MODULE_LIST, getModule } from "@/lib/modules";
+import { getAnchors, getVaultConsent } from "@/app/actions/vault";
+
 import { GroundAndSettle } from "@/components/modules/GroundAndSettle";
 import { TaskDecomposer } from "@/components/modules/TaskDecomposer";
 import { OneSmallAction } from "@/components/modules/OneSmallAction";
+import { TimeContainer } from "@/components/modules/TimeContainer";
+import { PriorityLens } from "@/components/modules/PriorityLens";
+import { ValuesToAction } from "@/components/modules/ValuesToAction";
+import { EnergyAwareWeek } from "@/components/modules/EnergyAwareWeek";
+import { SafetyGateway, type Resource } from "@/components/modules/SafetyGateway";
+import { TriggerMap } from "@/components/modules/TriggerMap";
+import { MooringLines } from "@/components/modules/MooringLines";
+import { LapseReview } from "@/components/modules/LapseReview";
+import { VaultGate } from "@/components/modules/VaultGate";
 
-type ModuleMeta = {
-  title: string;
-  condition: string;
-  conditionClass: string;
-  lede: string;
-  why: string;
-};
-
-const META: Record<string, ModuleMeta> = {
-  "ground-and-settle": {
-    title: "Ground & Settle",
-    condition: "Anxiety",
-    conditionClass: "bg-coral-soft text-[#B03A2E]",
-    lede: "A paced-breathing practice. Follow the circle: it grows as you breathe in, holds, then shrinks as you breathe out.",
-    why: "Slow, paced breathing with a longer exhale gently signals the body's calming system. It's a portable skill for high-arousal moments — not a cure, and you're in control the whole time. Adapted from paced-breathing and grounding practices in NHS and CCI anxiety self-help materials.",
-  },
-  "task-decomposer": {
-    title: "Task Decomposer",
-    condition: "ADHD · executive function",
-    conditionClass: "bg-violet-soft text-violet-deep",
-    lede: "Naming what's blocking you comes first — then we turn one goal into observable micro-steps, starting with something under two minutes.",
-    why: "Executive-function friction isn't laziness — it's a gap between intention and initiation. A concrete first step under two minutes lowers the activation cost, and a visible sequence offloads working memory. Neurodiversity-affirming by design; adapted from the Focus Forward ADHD Skills Group task-breakdown strategy.",
-  },
-  "one-small-action": {
-    title: "One Small Action",
-    condition: "Low mood",
-    conditionClass: "bg-sand text-[#8A5B00]",
-    lede: "Not a to-do list — just one action, sized for today. There's no failure state here.",
-    why: "In low mood, motivation usually follows action rather than coming first. Doing one small, valued, or pleasant thing — and noticing how it felt — is the core of behavioural activation. Sizing it down protects against the all-or-nothing trap. Adapted from WHO Step-by-Step and CCI behavioural-activation approaches.",
-  },
+const GROUP_STYLE: Record<string, string> = {
+  anxiety: "bg-coral-soft text-[#B03A2E]",
+  low_mood: "bg-sand text-[#8A5B00]",
+  adhd: "bg-violet-soft text-violet-deep",
+  substance: "bg-mint text-[#0B5C41]",
 };
 
 export function generateStaticParams() {
-  return Object.keys(META).map((id) => ({ id }));
+  return MODULE_LIST.map((m) => ({ id: m.id }));
 }
 
-export default function ModulePage({ params }: { params: { id: string } }) {
-  const meta = META[params.id];
+export function generateMetadata({ params }: { params: { id: string } }) {
+  const m = getModule(params.id);
+  return { title: m ? `${m.title} · Digital Sanctuary` : "Module" };
+}
+
+export default async function ModulePage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const meta = getModule(params.id);
   if (!meta) notFound();
+
+  // Vault modules need active consent before their data is even readable.
+  let consented = true;
+  if (meta.vault) {
+    const consent = await getVaultConsent();
+    consented = consent.granted;
+  }
+
+  // Safety Gateway needs the verified directory.
+  let resources: Resource[] = [];
+  if (meta.id === "safety-gateway") {
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("local_resources")
+      .select(
+        "service_type, name, contact, hours, languages, is_emergency, source_url, verified_at"
+      )
+      .eq("region", "IN")
+      .order("sort_order");
+    resources = (data ?? []) as Resource[];
+  }
+
+  let anchors: Record<string, number> = {};
+  if (meta.id === "mooring-lines" && consented) {
+    anchors = await getAnchors();
+  }
 
   return (
     <main className="max-w-2xl mx-auto px-6">
       <AppHeader />
 
       <section className="py-8">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <Link
             href="/dashboard"
             className="grid place-items-center w-10 h-10 rounded-xl bg-surface border-2.5 border-ink shadow-pop-sm font-extrabold no-underline text-ink"
@@ -59,19 +82,43 @@ export default function ModulePage({ params }: { params: { id: string } }) {
             ←
           </Link>
           <span
-            className={`ds-pill uppercase tracking-wide ${meta.conditionClass}`}
+            className={`ds-pill uppercase tracking-wide ${GROUP_STYLE[meta.group]}`}
           >
             {meta.condition}
           </span>
+          {meta.vault && (
+            <span className="ds-pill bg-surface-2">🔒 extra-private</span>
+          )}
         </div>
 
-        <h1 className="text-3xl mt-4">{meta.title}</h1>
-        <p className="text-ink-soft text-lg mt-3 max-w-[58ch]">{meta.lede}</p>
+        <h1 className="text-3xl mt-4">
+          <span className="mr-2">{meta.emoji}</span>
+          {meta.title}
+        </h1>
+        <p className="text-ink-soft text-lg mt-3 max-w-[58ch]">
+          {meta.description}
+        </p>
 
         <div className="mt-6">
-          {params.id === "ground-and-settle" && <GroundAndSettle />}
-          {params.id === "task-decomposer" && <TaskDecomposer />}
-          {params.id === "one-small-action" && <OneSmallAction />}
+          {meta.vault && !consented ? (
+            <VaultGate>{null}</VaultGate>
+          ) : (
+            <>
+              {meta.id === "ground-and-settle" && <GroundAndSettle />}
+              {meta.id === "task-decomposer" && <TaskDecomposer />}
+              {meta.id === "one-small-action" && <OneSmallAction />}
+              {meta.id === "time-container" && <TimeContainer />}
+              {meta.id === "priority-lens" && <PriorityLens />}
+              {meta.id === "values-to-action" && <ValuesToAction />}
+              {meta.id === "energy-aware-week" && <EnergyAwareWeek />}
+              {meta.id === "safety-gateway" && (
+                <SafetyGateway resources={resources} />
+              )}
+              {meta.id === "trigger-map" && <TriggerMap />}
+              {meta.id === "mooring-lines" && <MooringLines initial={anchors} />}
+              {meta.id === "lapse-review" && <LapseReview />}
+            </>
+          )}
         </div>
 
         <details className="mt-6 border-2 border-dashed border-ink rounded-[16px] p-4 bg-white/70">

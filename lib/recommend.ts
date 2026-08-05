@@ -17,10 +17,11 @@ export type CheckIn = {
 
 export type Mode = "calm" | "act" | "plan" | "reflect" | "connect";
 
-export type ModuleId =
-  | "ground-and-settle"
-  | "task-decomposer"
-  | "one-small-action";
+/**
+ * Module identifiers are data-driven (see lib/modules.ts), so this is a plain
+ * string rather than a closed union — the catalog is the source of truth.
+ */
+export type ModuleId = string;
 
 export type Suggestion = {
   moduleId: ModuleId;
@@ -57,6 +58,20 @@ export const MODULES: Record<ModuleId, Suggestion> = {
       "One achievable, kind, or connecting action — sized for today, whatever today looks like.",
     condition: "Low mood",
   },
+  "safety-gateway": {
+    moduleId: "safety-gateway",
+    title: "Safety Gateway",
+    description:
+      "A calm, always-available route to real help — emergency, overdose, withdrawal, and local services.",
+    condition: "Substance use",
+  },
+  "trigger-map": {
+    moduleId: "trigger-map",
+    title: "Trigger & Support Map",
+    description:
+      "Map what tends to come before an urge, pre-choose an alternative, and name who you'd contact.",
+    condition: "Substance use",
+  },
 };
 
 function pick(ids: ModuleId[]): Suggestion[] {
@@ -74,14 +89,25 @@ export function recommend(checkIn: CheckIn): Recommendation {
   const urge = checkIn.urge ?? 0;
   const mode = checkIn.mode;
 
-  // Rule 1 — a strong urge: steady the body first, and keep support close.
-  // (The full substance-use support plan arrives in Phase 5.)
+  // Rule 1 — a strong urge: support and safety come before any exercise.
+  // Safety Gateway is deliberately first because it needs no consent gate,
+  // so nobody in a difficult moment hits a permissions screen.
   if (urge >= 8) {
     return {
-      ...MODULES["ground-and-settle"],
+      ...MODULES["safety-gateway"],
       reason:
-        "You marked your urge as strong, so we start with something steadying — and urgent help stays one tap away.",
-      alternatives: pick(["one-small-action", "task-decomposer"]),
+        "You marked your urge as strong, so support comes before anything else. Nothing here is recorded, and urgent help stays one tap away.",
+      alternatives: pick(["trigger-map", "ground-and-settle"]),
+    };
+  }
+
+  // Rule 1b — a noticeable urge, but not overwhelming: planning helps.
+  if (urge >= 5) {
+    return {
+      ...MODULES["trigger-map"],
+      reason:
+        "There's an urge around. Deciding your alternative in advance shortens the gap between the urge and what you do next.",
+      alternatives: pick(["ground-and-settle", "safety-gateway"]),
     };
   }
 

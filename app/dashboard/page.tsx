@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
 import { MODULES, recommend, type Mode } from "@/lib/recommend";
+import { MODULE_LIST } from "@/lib/modules";
+import { ModuleGrid } from "@/components/ModuleGrid";
 import { getAllWorksheets } from "@/lib/worksheets/registry";
 
 export const metadata = { title: "Your dashboard · Digital Sanctuary" };
@@ -152,27 +154,7 @@ export default async function DashboardPage() {
             your pace · nothing is required
           </span>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {Object.values(MODULES).map((m) => (
-            <Link
-              key={m.moduleId}
-              href={`/modules/${m.moduleId}`}
-              className="ds-card !p-5 flex items-start gap-4 no-underline text-ink hover:-translate-y-0.5 transition-transform"
-            >
-              <span className="grid place-items-center w-11 h-11 rounded-xl bg-mint border-2 border-ink text-xl -rotate-3">
-                {m.moduleId === "ground-and-settle"
-                  ? "🌊"
-                  : m.moduleId === "task-decomposer"
-                    ? "🪜"
-                    : "🌱"}
-              </span>
-              <span>
-                <b className="block text-[15px]">{m.title}</b>
-                <span className="text-sm text-ink-faint">{m.condition}</span>
-              </span>
-            </Link>
-          ))}
-        </div>
+        <ModuleGrid />
       </section>
 
       {/* WORKSHEETS */}
@@ -232,7 +214,7 @@ export default async function DashboardPage() {
             <ul className="list-none p-0 m-0 mt-3">
               {history.map((s, i) => {
                 const label =
-                  MODULES[s.module_id as keyof typeof MODULES]?.title ??
+                  MODULE_LIST.find((m) => m.id === s.module_id)?.title ??
                   worksheets.find((w) => w.id === s.module_id)?.name ??
                   s.module_id;
                 const moved =
