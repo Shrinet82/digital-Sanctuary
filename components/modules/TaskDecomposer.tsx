@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { saveJournalEntry, savePracticeSession } from "@/app/actions/practice";
+import { AiSuggestion } from "@/components/ai/AiSuggestion";
 
 const BLOCKERS = [
   "Getting started",
@@ -108,7 +109,14 @@ export function TaskDecomposer() {
         className="w-full border-2.5 border-ink rounded-[14px] px-4 py-3 bg-surface"
       />
 
-      <div className="flex gap-3 flex-wrap items-center mt-4">
+      <AiSuggestion
+        task="reword_task"
+        text={goal}
+        label="✨ Shrink this for me"
+        onAccept={(v) => setGoal(v)}
+      />
+
+      <div className="flex gap-3 flex-wrap items-center mt-5">
         <button
           onClick={() => setSteps(buildSteps(goal))}
           className="ds-btn ds-btn-primary"

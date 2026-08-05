@@ -114,6 +114,34 @@ regions, send me verified numbers with an official source URL and I'll add them.
 Until a region has verified rows, the Safety Gateway deliberately shows nothing
 rather than guessing.
 
+## Phase 6 — The narrow AI pilot ✅
+
+- [x] 🤖 `ai-assist` Edge Function deployed (ACTIVE, `verify_jwt` on).
+- [x] 🤖 Deterministic guard runs **before** the model and again on its output,
+      in both the app and the function. 25/25 guard tests pass.
+- [x] 🤖 AI is **off by default** (`profiles.ai_enabled = false`) — verified.
+- [x] 🤖 `ai_usage_log` records the task and outcome only; the schema has no
+      column capable of holding prompt or output text.
+- [x] 🤖 Graceful degradation: with no provider key the UI says so calmly and
+      everything else keeps working.
+
+### ⏳ Optional: connect an AI provider
+
+The three AI features are dormant until a key exists. To switch them on:
+
+Supabase → **Edge Functions → ai-assist → Secrets**, add:
+
+```
+OPENAI_API_KEY = sk-...        # required
+AI_MODEL       = gpt-4o-mini   # optional, this is the default
+```
+
+Then a user must *also* opt in at **/insights → AI suggestions**. Both switches
+are required by design.
+
+**You do not have to do this.** The product is complete and fully usable with
+AI off — that is the intended default, not a degraded mode.
+
 ---
 
 ## Local development (for your IDE)
