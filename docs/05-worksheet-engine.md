@@ -89,6 +89,19 @@ Note the `safety_gate` — the engine reroutes to urgent help if the "experiment
 }
 ```
 
+## As built (Phase 3)
+
+- **Templates live in `content/worksheets/*.json`** — this directory *is* the library. `lib/worksheets/registry.ts` auto-discovers and validates every file at build time, so **dropping in a JSON file creates a new worksheet route with zero code changes** (verified: adding `opposite-action.json` produced `/worksheets/opposite-action` with no other edit).
+- **`lib/worksheets/types.ts`** defines the step types; **`components/worksheets/WorksheetPlayer.tsx`** renders any of them.
+- **`worksheet_templates` (Postgres)** is the *registry*: clinical owner, mechanism, evidence note, reading level, contraindications, `has_safety_gate`, and version. Readable by signed-in users; writable only by migrations (verified — a user insert is rejected by RLS).
+
+### Naming convention that powers trends
+If a template collects a pair of scale answers keyed `*_before` and `*_after`
+(e.g. `belief_before` / `belief_after`), the save action automatically records
+them as `rating_before` / `rating_after` on `practice_sessions` — so the
+worksheet appears in trend views alongside every other module. Keep that
+suffix convention when authoring new templates.
+
 ## How a template becomes a saved result
 
 - `<WorksheetPlayer>` takes a template id, fetches it from `worksheet_templates`, and renders one step at a time (candy neo-brutalist styling).

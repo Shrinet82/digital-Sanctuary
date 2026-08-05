@@ -68,6 +68,19 @@ Supabase → **Authentication → URL Configuration** → set
 **Site URL** to `https://digital-sanctuary-black.vercel.app`
 (add `http://localhost:3000` under Redirect URLs for local dev).
 
+## Phase 3 — Worksheet Engine ✅
+
+- [x] 🤖 `worksheet_templates` registry table + RLS (read-only to users).
+- [x] 🤖 `WorksheetPlayer` renders any template; 4 worksheets shipped as JSON.
+- [x] 🤖 Verified: adding a JSON file creates a new worksheet with zero code changes.
+
+### ⏳ Recommended: turn on leaked-password protection
+
+Supabase's advisor flagged this, and for an app holding mental-health journals
+it's worth two clicks: Supabase → **Authentication → Policies (Password
+settings)** → enable **"Prevent use of leaked passwords"**. It checks new
+passwords against HaveIBeenPwned so people can't reuse a breached one.
+
 ### 🔜 Later — Google OAuth (deferred)
 
 When we add it: create an OAuth client in Google Cloud Console, paste the client

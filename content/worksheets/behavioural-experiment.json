@@ -1,0 +1,82 @@
+{
+  "id": "behavioural-experiment",
+  "version": 1,
+  "name": "Behavioural Experiment",
+  "framework": "CBT",
+  "condition": "Anxiety",
+  "lede": "Anxiety makes predictions. This is a small, safe way to find out what actually happens — and to record the result before your memory rewrites it.",
+  "why": "Reassurance rarely shifts a fear; evidence sometimes does. By naming the prediction, rating how likely it feels, doing one small ordinary thing, and then re-rating it, you collect your own data. Note that this worksheet never generates or ranks an experiment for you — you choose from safe, everyday options, and anything involving risk routes to real support instead.",
+  "steps": [
+    {
+      "type": "safety_gate",
+      "key": "safety_check",
+      "prompt": "First — does this situation involve any of the following?",
+      "help": "Immediate danger · a medical symptom · someone hurting you · feeling unable to stay safe",
+      "yesLabel": "Yes, one of these applies",
+      "noLabel": "No, none of these",
+      "onYes": "route_urgent_help",
+      "routeMessage": "This isn't something to test in an exercise. That deserves real support, right now — not a worksheet."
+    },
+    {
+      "type": "longtext",
+      "key": "prediction",
+      "prompt": "What are you afraid will happen?",
+      "help": "Be as specific as you can — vague fears are hard to test.",
+      "placeholder": "e.g. If I ask a question in the meeting, people will think I'm not up to the job"
+    },
+    {
+      "type": "scale",
+      "key": "prob_before",
+      "prompt": "How likely does that feel right now?",
+      "lowLabel": "Won't happen",
+      "highLabel": "Certain"
+    },
+    {
+      "type": "single_choice",
+      "key": "experiment",
+      "prompt": "Pick a small, ordinary thing you could actually do",
+      "help": "Everyday and low-stakes on purpose. Choose the smallest one you'd genuinely try.",
+      "allowOther": true,
+      "options": [
+        "Ask one short question out loud",
+        "Send a message I've been putting off",
+        "Say no to one small request",
+        "Arrive somewhere without over-preparing",
+        "Let one small mistake stand uncorrected"
+      ]
+    },
+    {
+      "type": "text",
+      "key": "when",
+      "prompt": "When will you try it?",
+      "help": "A rough time is fine. You can always move it.",
+      "optional": true,
+      "placeholder": "e.g. tomorrow morning"
+    },
+    {
+      "type": "info",
+      "title": "Come back after",
+      "body": "The rest of this is for afterwards. Leave now and pick it up later — your answers are kept when you save at the end."
+    },
+    {
+      "type": "longtext",
+      "key": "what_happened",
+      "prompt": "What actually happened?",
+      "help": "What did you notice — in the room, and in you?",
+      "optional": true,
+      "placeholder": "e.g. I asked. Someone said it was a good question. Nobody looked at me oddly."
+    },
+    {
+      "type": "scale",
+      "key": "prob_after",
+      "prompt": "Knowing that — how likely does the feared thing feel now?",
+      "lowLabel": "Won't happen",
+      "highLabel": "Certain"
+    },
+    {
+      "type": "summary",
+      "compare": ["prob_before", "prob_after"],
+      "aiRecap": true
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "id": "abc-cognitive-model",
+  "version": 1,
+  "name": "The ABC Model",
+  "framework": "CBT",
+  "condition": "Anxiety · low mood",
+  "lede": "A thought isn't a fact. We'll look at one moment together — what happened, what you made of it, and what that led to.",
+  "why": "Separating the event (A) from the belief about it (B) from what followed (C) makes visible something that usually happens too fast to notice. Once a thought is written down, it stops being the air you're breathing and becomes something you can look at. This is the standard ABC cognitive model used across CBT self-help; the wording here is our own.",
+  "steps": [
+    {
+      "type": "info",
+      "title": "How this works",
+      "body": "Five short prompts, one at a time. Skip anything that doesn't fit, and leave whenever you like — nothing saves until the end."
+    },
+    {
+      "type": "longtext",
+      "key": "a_event",
+      "prompt": "A — Activating event: what happened?",
+      "help": "Just the facts, like a camera would see it.",
+      "placeholder": "e.g. I opened my inbox on Sunday night and saw a message from my manager"
+    },
+    {
+      "type": "longtext",
+      "key": "b_belief",
+      "prompt": "B — Belief: what went through your mind?",
+      "help": "Word for word if you can. You don't have to argue with it.",
+      "placeholder": "e.g. If I got this wrong, everything falls apart"
+    },
+    {
+      "type": "scale",
+      "key": "belief_before",
+      "prompt": "How much do you believe that thought right now?",
+      "lowLabel": "Not at all",
+      "highLabel": "Completely"
+    },
+    {
+      "type": "longtext",
+      "key": "c_consequence",
+      "prompt": "C — Consequence: how did you feel, and what did you do?",
+      "help": "Feelings and actions both count.",
+      "placeholder": "e.g. Chest went tight, I closed the laptop and avoided it all evening"
+    },
+    {
+      "type": "single_choice",
+      "key": "reframe_lens",
+      "prompt": "Try one wider view",
+      "help": "Pick whichever feels least forced. Skipping is fine.",
+      "optional": true,
+      "options": [
+        "What would I tell a friend in this exact situation?",
+        "What else could explain this?",
+        "What part of this can I actually control?"
+      ]
+    },
+    {
+      "type": "longtext",
+      "key": "wider_view",
+      "prompt": "So — what's a slightly wider way to hold it?",
+      "help": "Not forced positivity. Just a little more room.",
+      "optional": true,
+      "placeholder": "e.g. One message isn't the whole story; I can read it properly tomorrow"
+    },
+    {
+      "type": "scale",
+      "key": "belief_after",
+      "prompt": "And now — how much do you believe the original thought?",
+      "lowLabel": "Not at all",
+      "highLabel": "Completely"
+    },
+    {
+      "type": "summary",
+      "compare": ["belief_before", "belief_after"],
+      "aiRecap": true
+    }
+  ]
+}

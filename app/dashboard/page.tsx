@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
 import { MODULES, recommend, type Mode } from "@/lib/recommend";
+import { getAllWorksheets } from "@/lib/worksheets/registry";
 
 export const metadata = { title: "Your dashboard · Digital Sanctuary" };
 
@@ -51,6 +52,7 @@ export default async function DashboardPage() {
     ]);
 
   const name = profile?.display_name?.trim() || null;
+  const worksheets = getAllWorksheets();
 
   // Same deterministic engine as the check-in page.
   const reco = recommend({
@@ -173,6 +175,40 @@ export default async function DashboardPage() {
         </div>
       </section>
 
+      {/* WORKSHEETS */}
+      <section className="pb-8">
+        <div className="flex items-center gap-3 mb-3 flex-wrap">
+          <h2 className="text-xl">📓 Guided worksheets</h2>
+          <span className="ds-pill bg-sand rotate-1">one prompt at a time</span>
+          <Link
+            href="/worksheets"
+            className="text-sm font-bold text-violet-deep underline underline-offset-2 ml-auto"
+          >
+            See all {worksheets.length} →
+          </Link>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {worksheets.slice(0, 4).map((w) => (
+            <Link
+              key={w.id}
+              href={`/worksheets/${w.id}`}
+              className="ds-card !p-5 no-underline text-ink hover:-translate-y-0.5 transition-transform"
+            >
+              <div className="flex gap-2 flex-wrap mb-2">
+                <span className="ds-pill bg-violet-soft text-violet-deep">
+                  {w.framework}
+                </span>
+                <span className="ds-pill bg-mint text-[#0B5C41]">
+                  {w.steps.length} steps
+                </span>
+              </div>
+              <b className="block text-[15px]">{w.name}</b>
+              <span className="text-sm text-ink-faint">{w.condition}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* REFLECTION */}
       <section className="pb-4">
         <div className="flex items-center gap-3 mb-3">
@@ -189,7 +225,10 @@ export default async function DashboardPage() {
           ) : (
             <ul className="list-none p-0 m-0 mt-3">
               {history.map((s, i) => {
-                const mod = MODULES[s.module_id as keyof typeof MODULES];
+                const label =
+                  MODULES[s.module_id as keyof typeof MODULES]?.title ??
+                  worksheets.find((w) => w.id === s.module_id)?.name ??
+                  s.module_id;
                 const moved =
                   s.rating_before !== null && s.rating_after !== null
                     ? s.rating_before - s.rating_after
@@ -199,9 +238,7 @@ export default async function DashboardPage() {
                     key={i}
                     className="flex items-center justify-between gap-3 flex-wrap border-b-2 border-line/10 last:border-0 py-2.5"
                   >
-                    <span className="font-bold text-[15px]">
-                      {mod?.title ?? s.module_id}
-                    </span>
+                    <span className="font-bold text-[15px]">{label}</span>
                     <span className="flex items-center gap-2 flex-wrap">
                       {moved !== null && moved > 0 && (
                         <span className="ds-pill bg-mint text-[#0B5C41]">

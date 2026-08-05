@@ -1,0 +1,82 @@
+{
+  "id": "opposite-action",
+  "version": 1,
+  "name": "Opposite Action",
+  "framework": "DBT",
+  "condition": "Low mood · emotion regulation",
+  "lede": "Some emotions push you toward the thing that keeps them going. This is a small, deliberate move in the other direction — chosen by you, sized for today.",
+  "why": "Emotions come with action urges: sadness says withdraw, shame says hide, fear says avoid. When the emotion doesn't fit the facts — or acting on it would make things worse — doing the opposite, fully and gently, tends to shift it. This is the DBT opposite-action skill. It is not about forcing cheerfulness, and it never applies when the urge is protecting you from something genuinely unsafe.",
+  "steps": [
+    {
+      "type": "safety_gate",
+      "key": "safety_check",
+      "prompt": "Before we start — is the feeling warning you about something genuinely unsafe?",
+      "help": "For example: someone is hurting you, or you're in real danger. If so, the urge may be right and this isn't the tool.",
+      "yesLabel": "Yes, it might be a real warning",
+      "noLabel": "No, it's a familiar pull I want to shift",
+      "onYes": "route_urgent_help",
+      "routeMessage": "If the feeling is pointing at real danger, we don't want to talk you out of it. Let's get you to proper support instead."
+    },
+    {
+      "type": "single_choice",
+      "key": "emotion",
+      "prompt": "What's the strongest feeling right now?",
+      "allowOther": true,
+      "options": [
+        "Sadness / flatness",
+        "Shame",
+        "Fear or anxiety",
+        "Anger",
+        "Guilt"
+      ]
+    },
+    {
+      "type": "scale",
+      "key": "intensity_before",
+      "prompt": "How strong is it?",
+      "lowLabel": "Barely there",
+      "highLabel": "Overwhelming"
+    },
+    {
+      "type": "longtext",
+      "key": "urge",
+      "prompt": "What is it pushing you to do?",
+      "help": "The honest answer, not the tidy one.",
+      "placeholder": "e.g. cancel the plan and stay in bed with my phone"
+    },
+    {
+      "type": "single_choice",
+      "key": "opposite",
+      "prompt": "So what's the opposite — done small?",
+      "help": "Not the heroic version. The two-minute version.",
+      "allowOther": true,
+      "options": [
+        "Go where the people are, even briefly",
+        "Say the thing out loud instead of hiding it",
+        "Approach it gently instead of avoiding",
+        "Step back and soften instead of pushing",
+        "Do one kind thing for myself"
+      ]
+    },
+    {
+      "type": "longtext",
+      "key": "what_happened",
+      "prompt": "You tried it — what happened?",
+      "help": "Even a partial attempt counts here.",
+      "optional": true,
+      "placeholder": "e.g. Went for ten minutes, felt awkward, was glad I went"
+    },
+    {
+      "type": "scale",
+      "key": "intensity_after",
+      "prompt": "How strong is the feeling now?",
+      "lowLabel": "Barely there",
+      "highLabel": "Overwhelming"
+    },
+    {
+      "type": "summary",
+      "compare": ["intensity_before", "intensity_after"],
+      "aiRecap": true
+    }
+  ]
+}

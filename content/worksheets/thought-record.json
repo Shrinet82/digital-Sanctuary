@@ -1,0 +1,79 @@
+{
+  "id": "thought-record",
+  "version": 1,
+  "name": "Thought Record",
+  "framework": "CBT",
+  "condition": "Anxiety · low mood",
+  "lede": "Catch the thought and look at it in daylight. One prompt at a time — skip anything that doesn't fit.",
+  "why": "Writing a thought down separates having it from believing it. Noting where you were, what your body did, and what you told yourself turns a fog into something specific — and specific things can be worked with. Adapted in structure from standard CBT thought diaries; the prompts are our own and deliberately non-judgemental.",
+  "steps": [
+    {
+      "type": "longtext",
+      "key": "situation",
+      "prompt": "Where were you, and what was happening?",
+      "placeholder": "e.g. Sunday night, alone, scrolling on my phone"
+    },
+    {
+      "type": "multi_choice",
+      "key": "body",
+      "prompt": "What did your body do?",
+      "help": "Tap any that fit.",
+      "optional": true,
+      "allowOther": true,
+      "options": [
+        "Racing heart",
+        "Tight chest",
+        "Restless",
+        "Hot or sweaty",
+        "Foggy head",
+        "Stomach knot",
+        "Heavy / slowed down"
+      ]
+    },
+    {
+      "type": "scale",
+      "key": "intensity_before",
+      "prompt": "How intense does it feel right now?",
+      "lowLabel": "Calm",
+      "highLabel": "Very intense"
+    },
+    {
+      "type": "longtext",
+      "key": "thought",
+      "prompt": "What went through your mind?",
+      "help": "Word for word if you can. Just catching it counts — you don't have to argue with it.",
+      "placeholder": "e.g. I'm falling behind everyone"
+    },
+    {
+      "type": "single_choice",
+      "key": "lens",
+      "prompt": "Want to try one wider view?",
+      "optional": true,
+      "options": [
+        "What would I tell a friend?",
+        "What else could explain this?",
+        "What can I actually control?",
+        "Is this a fact, or a feeling?"
+      ]
+    },
+    {
+      "type": "longtext",
+      "key": "wider_view",
+      "prompt": "A slightly wider way to hold it",
+      "help": "It doesn't have to be convincing. A crack of light is enough.",
+      "optional": true
+    },
+    {
+      "type": "scale",
+      "key": "intensity_after",
+      "prompt": "And now — how intense does it feel?",
+      "lowLabel": "Calm",
+      "highLabel": "Very intense"
+    },
+    {
+      "type": "summary",
+      "compare": ["intensity_before", "intensity_after"],
+      "aiRecap": true
+    }
+  ]
+}
