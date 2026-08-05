@@ -211,9 +211,15 @@ export default async function DashboardPage() {
 
       {/* REFLECTION */}
       <section className="pb-4">
-        <div className="flex items-center gap-3 mb-3">
+        <div className="flex items-center gap-3 mb-3 flex-wrap">
           <h2 className="text-xl">🔮 Private reflection</h2>
           <span className="ds-pill bg-sand rotate-1">for your eyes only</span>
+          <Link
+            href="/insights"
+            className="text-sm font-bold text-violet-deep underline underline-offset-2 ml-auto"
+          >
+            See your patterns →
+          </Link>
         </div>
         <div className="ds-card">
           <b className="block mb-1">Recent practice</b>

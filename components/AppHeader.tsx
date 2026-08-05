@@ -16,6 +16,12 @@ export function AppHeader({ showSignOut = true }: { showSignOut?: boolean }) {
         Digital Sanctuary
       </Link>
       <div className="flex-1" />
+      <Link
+        href="/insights"
+        className="text-sm font-bold text-ink-soft no-underline hover:underline underline-offset-2"
+      >
+        Patterns
+      </Link>
       <UrgentHelpButton />
       {showSignOut && (
         <form action={signOut}>

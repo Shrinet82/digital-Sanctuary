@@ -37,6 +37,25 @@ AI is used in only three tightly-scoped, user-approved ways — never for anythi
 - Reject medication, emergency, dosing, diagnosis, therapy, and risk-disposition prompts → show deterministic escalation instead.
 - Log model/version, prompt class, and user acceptance; retain no unnecessary raw text.
 
+## Known, intentional advisor warnings
+
+Supabase's security advisor reports two `SECURITY DEFINER` functions callable by
+`authenticated`: **`export_my_data()`** and **`delete_my_account()`**. This is
+deliberate and must not be "fixed":
+
+- Users have a right to export and delete their own data, and reaching
+  `auth.users` to delete an account requires `SECURITY DEFINER`.
+- Both functions raise if `auth.uid()` is null, act **only** on `auth.uid()`
+  (never on a caller-supplied id), and are revoked from `public` and `anon`.
+- Verified with two accounts: user A's export contained none of user B's rows,
+  and A deleting itself left B completely intact.
+
+Revoking `EXECUTE` would remove the user's access to their own data — a privacy
+regression dressed up as a security fix.
+
+**Leaked-password protection** is also flagged. It's a Pro-plan feature
+(HaveIBeenPwned lookup) and is parked while the product is being built.
+
 ## Go / no-go before any public launch
 
 - [ ] Every worksheet has a clinical rationale + reading level + review date.
