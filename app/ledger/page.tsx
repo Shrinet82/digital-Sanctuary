@@ -5,6 +5,8 @@ import { AppHeader } from "@/components/AppHeader";
 import { YearGrid } from "@/components/ledger/YearGrid";
 import { buildYearGrid, type CheckInLite } from "@/lib/ledger";
 import { STATES } from "@/lib/checkin";
+import { passcodeGateStatus } from "@/app/actions/passcode";
+import { PasscodeLock } from "@/components/PasscodeLock";
 
 export const metadata = { title: "Your Ledger · Digital Sanctuary" };
 
@@ -14,6 +16,18 @@ export default async function LedgerPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
+
+  const gate = await passcodeGateStatus();
+  if (!gate.unlocked) {
+    return (
+      <main className="max-w-4xl mx-auto px-6">
+        <AppHeader />
+        <section className="py-16">
+          <PasscodeLock area="Your Ledger" />
+        </section>
+      </main>
+    );
+  }
 
   const year = new Date().getUTCFullYear();
   const { data: checkIns } = await supabase

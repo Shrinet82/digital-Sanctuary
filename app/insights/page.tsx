@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
 import { FactorLogger } from "@/components/tracking/FactorLogger";
 import { DataControls } from "@/components/tracking/DataControls";
+import { PasscodeSettings } from "@/components/PasscodeSettings";
+import { hasPasscodeSet } from "@/app/actions/passcode";
 import { MODULES } from "@/lib/recommend";
 import { STATE_COLOR, stateEmoji, stateLabel, type CheckInState } from "@/lib/checkin";
 import { getAllWorksheets } from "@/lib/worksheets/registry";
@@ -264,6 +266,11 @@ export default async function InsightsPage() {
             isn&apos;t shown at all.
           </div>
         </div>
+      </section>
+
+      {/* Passcode lock */}
+      <section className="pb-8">
+        <PasscodeSettings initialHasPasscode={await hasPasscodeSet()} />
       </section>
 
       {/* Data controls */}

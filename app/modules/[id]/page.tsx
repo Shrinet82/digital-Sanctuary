@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
 import { MODULE_LIST, getModule } from "@/lib/modules";
 import { getAnchors, getRecentContextLog, getVaultConsent } from "@/app/actions/vault";
+import { passcodeGateStatus } from "@/app/actions/passcode";
+import { PasscodeLock } from "@/components/PasscodeLock";
 
 import { GroundAndSettle } from "@/components/modules/GroundAndSettle";
 import { TaskDecomposer } from "@/components/modules/TaskDecomposer";
@@ -60,6 +62,21 @@ export default async function ModulePage({
   if (meta.vault) {
     const consent = await getVaultConsent();
     consented = consent.granted;
+  }
+
+  // The Vault is also passcode-gated when the user has set one (§14).
+  if (meta.vault && consented) {
+    const gate = await passcodeGateStatus();
+    if (!gate.unlocked) {
+      return (
+        <main className="max-w-2xl mx-auto px-6">
+          <AppHeader />
+          <section className="py-16">
+            <PasscodeLock area="The Vault" />
+          </section>
+        </main>
+      );
+    }
   }
 
   // Safety Gateway needs the verified directory.

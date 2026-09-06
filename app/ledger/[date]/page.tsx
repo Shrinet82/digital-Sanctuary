@@ -14,6 +14,8 @@ import {
   WANT_OPTIONS,
   type CheckInState,
 } from "@/lib/checkin";
+import { passcodeGateStatus } from "@/app/actions/passcode";
+import { PasscodeLock } from "@/components/PasscodeLock";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -43,6 +45,18 @@ export default async function LedgerDayPage({
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
+
+  const gate = await passcodeGateStatus();
+  if (!gate.unlocked) {
+    return (
+      <main className="max-w-3xl mx-auto px-6">
+        <AppHeader />
+        <section className="py-16">
+          <PasscodeLock area="Your Ledger" />
+        </section>
+      </main>
+    );
+  }
 
   const dayStart = `${date}T00:00:00.000Z`;
   const dayEnd = `${adjacentDate(date, 1)}T00:00:00.000Z`;
