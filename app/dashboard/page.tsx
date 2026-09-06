@@ -10,6 +10,8 @@ import { getAllWorksheets } from "@/lib/worksheets/registry";
 import { WeekStrip } from "@/components/ledger/WeekStrip";
 import { buildRecentStrip, type CheckInLite } from "@/lib/ledger";
 import { firstReflection, weekReflection } from "@/lib/patterns";
+import { pathContentForDay, pathDayNumber } from "@/lib/path";
+import { PathCard } from "@/components/PathCard";
 
 export const metadata = { title: "Your dashboard · Digital Sanctuary" };
 
@@ -49,7 +51,7 @@ export default async function DashboardPage() {
   ] = await Promise.all([
       supabase
         .from("profiles")
-        .select("display_name")
+        .select("display_name, path_dismissed")
         .eq("id", user.id)
         .maybeSingle(),
       supabase
@@ -76,6 +78,9 @@ export default async function DashboardPage() {
 
   const name = profile?.display_name?.trim() || null;
   const worksheets = getAllWorksheets();
+  const pathDay = profile?.path_dismissed || !user.created_at ? null : pathDayNumber(user.created_at);
+  const pathContent = pathDay ? pathContentForDay(pathDay) : undefined;
+
   const reflectionRows = (reflectionCheckIns ?? []) as {
     log_date: string;
     state: CheckInState;
@@ -123,6 +128,12 @@ export default async function DashboardPage() {
           {hasCheckIn ? "New check-in" : "Start a check-in →"}
         </Link>
       </section>
+
+      {pathDay && pathContent && (
+        <section className="pb-8">
+          <PathCard day={pathDay} content={pathContent} />
+        </section>
+      )}
 
       {/* LEDGER strip */}
       <section className="pb-8">

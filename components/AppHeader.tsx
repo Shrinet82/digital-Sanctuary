@@ -50,6 +50,12 @@ export async function AppHeader({ showSignOut = true }: { showSignOut?: boolean 
         Ledger
       </Link>
       <Link
+        href="/toolkit"
+        className="text-sm font-bold text-ink-soft no-underline hover:underline underline-offset-2"
+      >
+        Toolkit
+      </Link>
+      <Link
         href="/insights"
         className="text-sm font-bold text-ink-soft no-underline hover:underline underline-offset-2"
       >
