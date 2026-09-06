@@ -1,19 +1,34 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
+import type { SafetyNetData } from "@/app/actions/safetynet";
+import type { Resource } from "@/components/modules/SafetyGateway";
+
+/** Some contact strings list alternatives ("14416 or 1-800-..."); tel: needs just one. */
+function firstPhone(contact: string): string {
+  return contact.split(/\s+or\s+/i)[0].replace(/[^\d+]/g, "");
+}
 
 /**
  * The urgent-support dialog. Shared by the header button and by any
  * worksheet safety_gate that routes here.
  *
- * Routing to this dialog is always decided by fixed rules — never by a model.
+ * Routing to this dialog is always decided by fixed rules — never by a
+ * model. When the user has built a Safety Net (§8), it's shown here
+ * verbatim, in their own words, above the generic routes. "Lines" is
+ * always the live, verified local_resources directory — never hardcoded.
  */
 export function UrgentHelpDialog({
   open,
   onClose,
+  safetyNet = null,
+  resources = [],
 }: {
   open: boolean;
   onClose: () => void;
+  safetyNet?: SafetyNetData | null;
+  resources?: Resource[];
 }) {
   useEffect(() => {
     if (!open) return;
@@ -25,6 +40,14 @@ export function UrgentHelpDialog({
   }, [open, onClose]);
 
   if (!open) return null;
+
+  const emergency = resources.filter((r) => r.is_emergency);
+  const lines = resources.filter(
+    (r) => r.service_type === "crisis_line" || r.service_type === "helpline"
+  );
+  const hasSafetyNet =
+    safetyNet &&
+    (safetyNet.signs || safetyNet.thingsThatWorked || safetyNet.people.length > 0);
 
   return (
     <div
@@ -51,14 +74,100 @@ export function UrgentHelpDialog({
           please reach a person now. A digital tool can&apos;t keep you safe —
           these routes can.
         </p>
+
+        {hasSafetyNet && (
+          <div className="mt-4 border-2.5 border-ink rounded-2xl p-4 bg-violet-soft space-y-3">
+            <b className="text-sm">Your Safety Net</b>
+            {safetyNet!.signs && (
+              <p className="text-sm m-0">
+                <span className="text-ink-faint block text-xs">
+                  What this looks like for you
+                </span>
+                {safetyNet!.signs}
+              </p>
+            )}
+            {safetyNet!.thingsThatWorked && (
+              <p className="text-sm m-0">
+                <span className="text-ink-faint block text-xs">
+                  What&apos;s worked before
+                </span>
+                {safetyNet!.thingsThatWorked}
+              </p>
+            )}
+            {safetyNet!.people.length > 0 && (
+              <div className="space-y-1.5">
+                <span className="text-ink-faint block text-xs">People</span>
+                {safetyNet!.people.map((p, i) => (
+                  <a
+                    key={i}
+                    href={`tel:${p.contact.replace(/\s+/g, "")}`}
+                    className="flex items-center justify-between gap-3 border-2 border-ink rounded-xl px-3 py-2 bg-white no-underline text-ink"
+                  >
+                    <b className="text-sm">{p.name || "Call"}</b>
+                    <span className="font-display font-extrabold">{p.contact}</span>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {!hasSafetyNet && (
+          <p className="text-xs text-ink-faint mt-3">
+            <Link href="/safety-net" className="font-bold underline underline-offset-2">
+              Build your Safety Net
+            </Link>{" "}
+            while things are steady, and it&apos;ll show up here, in your own words.
+          </p>
+        )}
+
         <ul className="mt-4 space-y-2 text-sm list-none p-0">
           <li className="rounded-xl border-2 border-ink p-3">
-            <b>📞 Emergency services</b> — life-threatening danger, overdose, or
-            injury → call your local emergency number now.
+            <b>📞 Emergency services</b>
+            {emergency.length > 0 ? (
+              <div className="mt-2 space-y-2">
+                {emergency.map((r) => (
+                  <div key={r.name} className="flex items-center justify-between gap-3">
+                    <span>{r.name}</span>
+                    <a
+                      href={`tel:${firstPhone(r.contact)}`}
+                      className="font-display font-extrabold text-lg"
+                    >
+                      {r.contact}
+                    </a>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              " — life-threatening danger, overdose, or injury → call your local emergency number now."
+            )}
           </li>
           <li className="rounded-xl border-2 border-ink p-3">
-            <b>💬 Crisis line / text</b> — trained humans, 24/7. A verified,
-            region-specific line will appear here.
+            <b>💬 Crisis line / text</b> — trained humans, 24/7.
+            {lines.length > 0 ? (
+              <div className="mt-2 space-y-2">
+                {lines.map((r) => (
+                  <div key={r.name}>
+                    <div className="flex items-center justify-between gap-3">
+                      <span>{r.name}</span>
+                      <a
+                        href={`tel:${firstPhone(r.contact)}`}
+                        className="font-display font-extrabold"
+                      >
+                        {r.contact}
+                      </a>
+                    </div>
+                    {(r.hours || r.languages) && (
+                      <span className="block text-xs text-ink-faint">
+                        {[r.hours, r.languages].filter(Boolean).join(" · ")}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              " We don't have a verified line for your region yet."
+            )}
           </li>
           <li className="rounded-xl border-2 border-ink p-3">
             <b>🧑‍⚕️ Talk to a professional</b> — your GP, therapist, or a local

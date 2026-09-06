@@ -1,9 +1,36 @@
 import Link from "next/link";
 import { UrgentHelpButton } from "@/components/UrgentHelpButton";
 import { signOut } from "@/app/auth/actions";
+import { createClient } from "@/lib/supabase/server";
+import { getSafetyNet } from "@/app/actions/safetynet";
+import type { Resource } from "@/components/modules/SafetyGateway";
 
-/** Shared top bar. The urgent-help control is present on every screen, always. */
-export function AppHeader({ showSignOut = true }: { showSignOut?: boolean }) {
+/**
+ * Shared top bar. The urgent-help control is present on every screen,
+ * always, and — for signed-in users — carries their own Safety Net (§8)
+ * plus the live, verified local directory, so it's never just generic
+ * placeholder copy.
+ */
+export async function AppHeader({ showSignOut = true }: { showSignOut?: boolean }) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const [safetyNet, resources] = user
+    ? await Promise.all([
+        getSafetyNet(),
+        supabase
+          .from("local_resources")
+          .select(
+            "service_type, name, contact, hours, languages, is_emergency, source_url, verified_at"
+          )
+          .eq("region", "IN")
+          .order("sort_order")
+          .then((r) => (r.data ?? []) as Resource[]),
+      ])
+    : [null, [] as Resource[]];
+
   return (
     <header className="flex items-center gap-4 py-4 flex-wrap">
       <Link
@@ -28,7 +55,13 @@ export function AppHeader({ showSignOut = true }: { showSignOut?: boolean }) {
       >
         Patterns
       </Link>
-      <UrgentHelpButton />
+      <Link
+        href="/safety-net"
+        className="text-sm font-bold text-ink-soft no-underline hover:underline underline-offset-2"
+      >
+        Safety Net
+      </Link>
+      <UrgentHelpButton safetyNet={safetyNet} resources={resources} />
       {showSignOut && (
         <form action={signOut}>
           <button className="text-sm font-bold text-ink-soft underline underline-offset-2">
