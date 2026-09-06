@@ -34,6 +34,36 @@ export const MODULE_LIST: ModuleMeta[] = [
       "A short paced-breathing practice. Follow the circle; leave whenever you like.",
     why: "Slow, paced breathing with a longer exhale gently signals the body's calming system. It's a portable skill for high-arousal moments — not a cure, and you're in control the whole time. Adapted from paced-breathing and grounding practices in NHS and CCI anxiety self-help materials.",
   },
+  {
+    id: "ride-the-wave",
+    title: "Ride the Wave",
+    emoji: "🌊",
+    group: "anxiety",
+    condition: "Urge or spike",
+    description:
+      "A timed container for an urge or spike — something to do while it passes, not a plan for later.",
+    why: "An urge is strongest right when it starts, and it passes whether or not you act on it. Urge surfing gives you something concrete to do for exactly as long as it takes. Adapted from Marlatt & Gordon's Relapse Prevention (1985) — established within relapse-prevention packages, weaker studied as a standalone piece (evidence grade B). Nothing in the activity bank involves pain, cold, or discomfort — that's substitution, not regulation.",
+  },
+  {
+    id: "grounding-54321",
+    title: "5-4-3-2-1",
+    emoji: "🖐️",
+    group: "anxiety",
+    condition: "Anxiety",
+    description:
+      "A guided sensory countdown — five things you see, down to one thing you taste.",
+    why: "Widely practised sensory grounding. The formal evidence for it is thin (evidence grade C), but it's ubiquitous, has no red flags, and needs no equipment or writing — so it ships as a normal toolkit item, no hedging needed.",
+  },
+  {
+    id: "card-deck",
+    title: "Card Deck",
+    emoji: "🃏",
+    group: "anxiety",
+    condition: "Racing thoughts",
+    description:
+      "Swipe away unhelpful self-talk, keep the supportive. Sixty seconds, no typing.",
+    why: "This maps to Cognitive Bias Modification, whose formal trial evidence didn't hold up under later, better trials (evidence grade C). Decided with the consulting psychiatrist: it ships anyway, framed plainly to you as self-affirmation, never as treatment — a quick, honest ritual of reminding yourself what you already know, not a claim that swiping changes how you think.",
+  },
 
   /* ---------------- low mood ---------------- */
   {
@@ -68,6 +98,16 @@ export const MODULE_LIST: ModuleMeta[] = [
   },
 
   /* ---------------- adhd ---------------- */
+  {
+    id: "whats-blocking-me",
+    title: "What's Blocking Me?",
+    emoji: "🚧",
+    group: "adhd",
+    condition: "ADHD",
+    description:
+      "Name the friction and get routed straight to the tool built for it. The entry point for this whole lane.",
+    why: "Nobody opens an app thinking 'I need an executive-function intervention' — they think 'I can't start.' Naming the specific friction and routing deterministically avoids handing someone eleven options when starting anything is already the problem. Draws on the same Focus Forward ADHD Skills Group approach behind Task Decomposer, Priority Lens, and Time Container.",
+  },
   {
     id: "task-decomposer",
     title: "Task Decomposer",

@@ -93,12 +93,42 @@ export const MODULES: Record<ModuleId, Suggestion> = {
       "A week planned from your real capacity, not an ideal one. Move or drop anything, no penalty.",
     condition: "Low mood",
   },
+  "ride-the-wave": {
+    moduleId: "ride-the-wave",
+    title: "Ride the Wave",
+    description:
+      "A timed container for an urge or spike — something to do while it passes, not a plan for later.",
+    condition: "Urge or spike",
+  },
+  "card-deck": {
+    moduleId: "card-deck",
+    title: "Card Deck",
+    description:
+      "Swipe away unhelpful self-talk, keep the supportive. Sixty seconds, no typing.",
+    condition: "Racing thoughts",
+  },
+  "whats-blocking-me": {
+    moduleId: "whats-blocking-me",
+    title: "What's Blocking Me?",
+    description:
+      "Name the friction and get routed straight to the tool built for it.",
+    condition: "ADHD",
+  },
+  "grounding-54321": {
+    moduleId: "grounding-54321",
+    title: "5-4-3-2-1",
+    description:
+      "A guided sensory countdown — five things you see, down to one thing you taste.",
+    condition: "Anxiety",
+  },
 };
 
 /**
  * Modules the "surprise me" rule (§13 item 10) is allowed to pick from.
- * Deliberately excludes the vault (needs consent) and Safety Gateway
- * (never something to stumble into by chance).
+ * Deliberately excludes the vault (needs consent), Safety Gateway (never
+ * something to stumble into by chance), Ride the Wave (targeted at an
+ * urge someone didn't say they have), and What's Blocking Me? (a router,
+ * not something to land on at random).
  */
 const SURPRISE_POOL: ModuleId[] = [
   "ground-and-settle",
@@ -107,6 +137,8 @@ const SURPRISE_POOL: ModuleId[] = [
   "time-container",
   "priority-lens",
   "energy-aware-week",
+  "grounding-54321",
+  "card-deck",
 ];
 
 function pick(ids: ModuleId[]): Suggestion[] {
@@ -137,13 +169,11 @@ export function recommend(
   const { state, loudest, want } = checkIn;
 
   // 2. Rough + craving: hold on through the urge itself.
-  // PLACEHOLDER (Phase B): Ride the Wave doesn't exist yet — Ground & Settle
-  // is the nearest built tool for "something to do while this passes."
   if (state === "rough" && loudest.includes("craving")) {
     return result(
-      "ground-and-settle",
-      "You said it's rough right now and craving is loud. Slow, paced breathing gives you something to do while it passes.",
-      ["trigger-map", "one-small-action"]
+      "ride-the-wave",
+      "You said it's rough right now and craving is loud — this is the one for holding on.",
+      ["trigger-map", "ground-and-settle"]
     );
   }
 
@@ -157,12 +187,11 @@ export function recommend(
   }
 
   // 4. Explicitly asked for help through an urge.
-  // PLACEHOLDER (Phase B): same substitution as rule 2.
   if (want === "urge") {
     return result(
-      "ground-and-settle",
-      "You said you want to get through this urge. Steady, paced breathing is the best tool we have for that right now.",
-      ["trigger-map", "one-small-action"]
+      "ride-the-wave",
+      "You said you want to get through this urge. This is a timed container built for exactly that.",
+      ["trigger-map", "ground-and-settle"]
     );
   }
 
@@ -176,13 +205,11 @@ export function recommend(
   }
 
   // 6. Asked for help starting.
-  // PLACEHOLDER (Phase B): "What's Blocking Me?" doesn't exist yet —
-  // Task Decomposer is today's real entry point for "I can't start."
   if (want === "start") {
     return result(
-      "task-decomposer",
-      "You said you want help starting, so let's find the smallest first step.",
-      ["ground-and-settle", "priority-lens"]
+      "whats-blocking-me",
+      "You said you want help starting. Let's name what's actually in the way first.",
+      ["task-decomposer", "priority-lens"]
     );
   }
 
@@ -205,13 +232,11 @@ export function recommend(
   }
 
   // 9. Anxious is the loudest thing.
-  // PLACEHOLDER (Phase B): Card Deck doesn't exist yet — Ground & Settle is
-  // today's real anxiety tool.
   if (loudest.includes("anxious")) {
     return result(
-      "ground-and-settle",
-      "Anxious was the loudest thing you flagged, so let's settle the body first.",
-      ["one-small-action", "task-decomposer"]
+      "card-deck",
+      "Anxious was the loudest thing you flagged — a quick pass through the deck can take the edge off the noise.",
+      ["ground-and-settle", "grounding-54321"]
     );
   }
 

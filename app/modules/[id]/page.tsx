@@ -17,6 +17,10 @@ import { TriggerMap } from "@/components/modules/TriggerMap";
 import { MooringLines } from "@/components/modules/MooringLines";
 import { LapseReview } from "@/components/modules/LapseReview";
 import { VaultGate } from "@/components/modules/VaultGate";
+import { RideTheWave } from "@/components/modules/RideTheWave";
+import { CardDeck } from "@/components/modules/CardDeck";
+import { WhatsBlockingMe } from "@/components/modules/WhatsBlockingMe";
+import { FiveSenses } from "@/components/modules/FiveSenses";
 
 const GROUP_STYLE: Record<string, string> = {
   anxiety: "bg-coral-soft text-[#B03A2E]",
@@ -117,6 +121,10 @@ export default async function ModulePage({
               {meta.id === "trigger-map" && <TriggerMap />}
               {meta.id === "mooring-lines" && <MooringLines initial={anchors} />}
               {meta.id === "lapse-review" && <LapseReview />}
+              {meta.id === "ride-the-wave" && <RideTheWave />}
+              {meta.id === "card-deck" && <CardDeck />}
+              {meta.id === "whats-blocking-me" && <WhatsBlockingMe />}
+              {meta.id === "grounding-54321" && <FiveSenses />}
             </>
           )}
         </div>
