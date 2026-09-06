@@ -1,38 +1,46 @@
 # ✦ Digital Sanctuary
 
-> A single, low-friction web app that helps people navigating **anxiety, low mood, ADHD, and substance use** — one calm home that does the job of Headspace, Goblin Tools, Tiimo *and* Bearable, and remembers what actually helps *you*.
+> A private, deterministic, no-AI web app for people living with anxiety, low mood, ADHD, or substance use — usually more than one at once.
 
-**Status:** Pre-build. Design prototype + full plan complete. Repo currently holds the planning documents; code scaffolding (Phase 0) is next.
+**Status: v2 in progress.** The product is being rebuilt against [`digital-sanctuary-redesign.md`](./digital-sanctuary-redesign.md), which is the current source of truth for what this product is and why. Phases A (the Spine) and B (the Hold) of that plan's roadmap are complete; see [§19 of the redesign doc](./digital-sanctuary-redesign.md#19--roadmap) for what's next.
 
 ---
 
 ## What this is
 
-Most people juggling overlapping mental-health needs have to app-hop: one app to calm down, another to break down a task, a third to log mood. Digital Sanctuary is **one place** that:
+Digital Sanctuary does three things:
 
-1. **Meets you where you are today** — a 15-second check-in surfaces the *one smallest helpful next step* (panic, paralysis, flat mood, or a craving).
-2. **Remembers and reflects** — saved history and gentle, streak-free tracking so you can see yourself getting steadier over time.
-3. **Stays safe** — always-on crisis routing, education-not-treatment framing, and privacy by default.
+1. **Holds you through a bad moment** — open it in distress, be doing something useful within fifteen seconds.
+2. **Remembers your days without asking much of you** — the check-in *is* the day's log entry, tap-first, no separate tracker to maintain.
+3. **Shows you your own patterns** — what actually helps *you*, learned from what you did, not guessed at.
 
-**Core principle:** *Deterministic by default.* Fixed rules, transparent calculations, and traceable content power the experience. Generative AI is optional and narrow (reword a task, recap your own words) — it never diagnoses, decides risk, or acts as a therapist.
+Nothing in it grades you. Nothing resets. Nothing guesses — every recommendation traces to a rule you can read in [`lib/recommend.ts`](./lib/recommend.ts).
+
+**This is education and skills-practice, not diagnosis or treatment.** Crisis routing is deterministic, always visible, and never decided by a model — because there is no model. See §13 and §17 of the redesign doc for the full determinism and evidence policy.
 
 ---
 
-## 📚 Documentation map — read in this order
+## What's actually built right now
 
-| # | Doc | What it covers |
-|---|-----|----------------|
-| 🧭 | [AGENTS.md](./AGENTS.md) | **Start here.** Context sweep for any human or AI contributor — the whole project in one file. |
-| 1 | [docs/01-product-blueprint.md](./docs/01-product-blueprint.md) | Vision, audience, and the feature map vs. competitors |
-| 2 | [docs/02-architecture.md](./docs/02-architecture.md) | Next.js + Supabase + Vercel stack and data flow |
-| 3 | [docs/03-accounts.md](./docs/03-accounts.md) | Login, guest mode, and guest→account merge |
-| 4 | [docs/04-database.md](./docs/04-database.md) | Every table + Row-Level Security |
-| 5 | [docs/05-worksheet-engine.md](./docs/05-worksheet-engine.md) | Turning CBT/DBT sheets into interactive forms (the core bet) |
-| 6 | [docs/06-modules-catalog.md](./docs/06-modules-catalog.md) | All 30+ therapeutic modules and how each helps |
-| 7 | [docs/07-competitor-comparison.md](./docs/07-competitor-comparison.md) | Head-to-head vs. Headspace, Calm, Goblin Tools, Tiimo, Moodfit, Bearable |
-| 8 | [docs/08-tracking-and-insights.md](./docs/08-tracking-and-insights.md) | What's logged and the streak-free insight layer |
-| 9 | [docs/09-safety-and-privacy.md](./docs/09-safety-and-privacy.md) | Crisis routing, consent, the AI allowlist |
-| 10 | [docs/10-roadmap.md](./docs/10-roadmap.md) | Phased build plan with acceptance criteria |
+| Area | Status |
+|---|---|
+| Auth (email/password) | ✅ built |
+| Tap-first check-in (bean → loudest → context → want) | ✅ built |
+| The Ledger — Year Grid, day view, journal ladder rungs 0-3 | ✅ built |
+| Deterministic recommender (§13's rule chain) | ✅ built |
+| Safety Net (signs / what's worked / people / verified lines) | ✅ built |
+| Ride the Wave, Card Deck, What's Blocking Me?, 5-4-3-2-1 | ✅ built |
+| Patterns — day-3 first reflection, day-7 week reflection, what-helps-most, factor co-occurrence | ✅ built |
+| Ground & Settle, Task Decomposer, One Small Action, Time Container, Priority Lens, Values to Action, Energy-Aware Week | ✅ built (pre-existing) |
+| Substance-use Vault (consent-gated: Trigger Map, Mooring Lines, Lapse Review, Safety Gateway) | ✅ built (pre-existing) |
+| Worksheet engine (4 templates: Thought Record, ABC Model, Behavioural Experiment, Opposite Action) | ✅ built (pre-existing) |
+| Tracking/insights, export/delete | ✅ built (pre-existing) |
+| AI, of any kind | ❌ removed entirely (was a narrow, guarded pilot in v1 — see §13 for why it's gone) |
+| The 14-day Path, onboarding, journal rungs 4-5, Worry Sorter/Window, Before/After | ⏳ not yet built (Phase C) |
+| Passcode lock, Vault Context Log, remaining catalog modules, clinical review | ⏳ not yet built (Phase D) |
+| Hindi, local-only mode, offline-first | ⏳ not yet built (Phase E) |
+
+If you're reading the code and something looks unfinished or half-wired, check the redesign doc's roadmap (§19) before assuming it's a bug — a lot of the catalog is intentionally sequenced, not missing.
 
 ---
 
@@ -41,26 +49,43 @@ Most people juggling overlapping mental-health needs have to app-hop: one app to
 | Layer | Choice |
 |-------|--------|
 | Frontend | **Next.js 14** (App Router) + **TypeScript** + **Tailwind CSS** |
-| Backend | **Supabase** — Auth, Postgres, Row-Level Security, Storage, Edge Functions |
-| Hosting | **Vercel** (auto-deploy on push to `main`) |
-| Source | **GitHub** — this repo (`Shrinet82/digital-Sanctuary`) |
+| Backend | **Supabase** — Auth, Postgres, Row-Level Security |
+| Tests | **Vitest** — unit tests over the deterministic core (recommender, Ledger, Patterns, seeded content selection) |
+| CI | **GitHub Actions** — typecheck, test, build on every push/PR to `main` |
+| Hosting | Vercel (auto-deploy on push to `main`) |
 
-### Supabase target
-- **Account:** `Supabase 2`  ·  **Organization:** `Mad82-ops`
-- **Project:** *none yet* — Phase 0 creates the project inside the `Mad82-ops` org.
-
----
-
-## ⚠️ Important boundaries (read before contributing)
-
-- This is **education and skills-practice, not diagnosis or treatment.**
-- **No AI risk decisions.** Crisis routing is always deterministic.
-- **No streaks, scores, or shame mechanics** — by design.
-- **Substance-use data** lives in a separately-consented, extra-restricted domain.
-- **Worksheet content** is originally authored (mechanism preserved, wording ours) unless a source licence explicitly allows adaptation. We do not scrape/rehost clinical PDFs.
+No Google OAuth, no guest mode — despite what older docs in this repo say. Email/password only, for now.
 
 ---
 
-## 🚀 Next step
+## Running it locally
 
-**Phase 0 — Foundations:** scaffold the Next.js app, port the prototype's "candy neo-brutalist" design system, connect Supabase (create the project in `Mad82-ops`), deploy the shell to Vercel. See [docs/10-roadmap.md](./docs/10-roadmap.md).
+```bash
+npm install
+cp .env.example .env.local   # fill in your Supabase project's URL + anon key
+npm run dev
+```
+
+```bash
+npm run typecheck   # tsc --noEmit
+npm test            # vitest run
+npm run build       # production build
+```
+
+Database schema lives in [`supabase/migrations/`](./supabase/migrations/), applied in order. `content/worksheets/*.json` holds the worksheet templates — dropping a new one in is enough to register it, no code change needed.
+
+---
+
+## ⚠️ Important boundaries
+
+- **Zero AI.** Every suggestion is authored or rule-based. See `digital-sanctuary-redesign.md` §13.
+- **No streaks, scores, or shame mechanics.** Completion states are done / partly / moved / not_today — never "failed."
+- **Substance-use data** lives behind a consent gate enforced in Postgres RLS, not just the UI — the rows are unreadable even to their owner without an active consent record.
+- **We invent no methods.** Every module implements a named, published, trialled protocol — see the evidence register in §17.
+- **Export and delete are one tap, never buried.**
+
+---
+
+## 📚 Other documentation in this repo
+
+`docs/01` through `docs/11` are the **v1 planning docs** — written before this rebuild and largely superseded by `digital-sanctuary-redesign.md`. They're kept for history, not as current instructions; where they conflict with the redesign doc or the code, the redesign doc wins. [`AGENTS.md`](./AGENTS.md) has been updated to reflect v2 and is the right starting point for a new contributor.

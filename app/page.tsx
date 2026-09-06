@@ -27,15 +27,17 @@ export default function Home() {
       {/* Hero */}
       <section className="py-14">
         <span className="ds-pill bg-yellow -rotate-1 mb-5">
-          ✦ Phase 0 · foundations
+          ✦ private · no AI · free
         </span>
         <h1 className="text-4xl sm:text-5xl max-w-[17ch]">
-          One calm home for <span className="ds-hl">how you actually feel.</span>
+          A quiet place that asks how you are,{" "}
+          <span className="ds-hl">and remembers.</span>
         </h1>
         <p className="text-lg text-ink-soft max-w-[58ch] mt-5">
-          Anxiety, low mood, ADHD, and substance use — met with one small,
-          helpful next step at a time. This is the app shell; the modules land
-          next.
+          For anxiety, low mood, ADHD, and substance use — usually more than
+          one at once. Fifteen seconds to something useful, every time.
+          Nothing here guesses about you: every suggestion comes from a rule
+          you can read.
         </p>
 
         <div className="flex gap-3 flex-wrap mt-7">
@@ -48,26 +50,33 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Design-system proof */}
+      {/* What makes this different */}
       <section className="py-6">
-        <h2 className="text-2xl mb-4">The design system is live</h2>
+        <h2 className="text-2xl mb-4">What&apos;s different here</h2>
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="ds-card">
-            <span className="ds-pill bg-violet-soft text-violet-deep">Violet</span>
+            <span className="ds-pill bg-violet-soft text-violet-deep">
+              Tap first
+            </span>
             <p className="mt-3 text-sm text-ink-soft">
-              Primary actions and focus states.
+              The check-in is four taps, one optional. It&apos;s also the
+              day&apos;s log entry — nothing separate to fill in twice.
             </p>
           </div>
           <div className="ds-card">
-            <span className="ds-pill bg-teal-soft text-teal">Teal &amp; mint</span>
+            <span className="ds-pill bg-teal-soft text-teal">
+              Nothing resets
+            </span>
             <p className="mt-3 text-sm text-ink-soft">
-              Calm, grounding, and success states.
+              The Ledger accumulates. No streaks, no scores, no missed-day
+              guilt — a gap is just a gap.
             </p>
           </div>
           <div className="ds-card">
-            <span className="ds-pill bg-coral-soft text-coral">Coral</span>
+            <span className="ds-pill bg-coral-soft text-coral">Zero AI</span>
             <p className="mt-3 text-sm text-ink-soft">
-              Decorative accents — never used for emergency red.
+              Every recommendation traces to a rule you can see. Nothing is
+              generated, guessed, or diagnosed.
             </p>
           </div>
         </div>
