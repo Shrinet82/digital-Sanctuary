@@ -2,7 +2,7 @@
 
 > A private, deterministic, no-AI web app for people living with anxiety, low mood, ADHD, or substance use — usually more than one at once.
 
-**Status: v2 in progress.** The product is being rebuilt against [`digital-sanctuary-redesign.md`](./digital-sanctuary-redesign.md), which is the current source of truth for what this product is and why. Phases A (the Spine) and B (the Hold) of that plan's roadmap are complete; see [§19 of the redesign doc](./digital-sanctuary-redesign.md#19--roadmap) for what's next.
+**Status: v2 largely built.** The product has been rebuilt against [`digital-sanctuary-redesign.md`](./digital-sanctuary-redesign.md), which is the current source of truth for what this product is and why. Phases A through D of that plan's roadmap are complete — the full module catalog, the Path, passcode lock, and the Vault are all in place, and the therapy content + evidence register have the founder's sign-off (see §17). What's left is Phase E's ongoing crisis-directory growth and the still-open items in §18. See [§19](./digital-sanctuary-redesign.md#19--roadmap).
 
 ---
 
@@ -26,21 +26,22 @@ Nothing in it grades you. Nothing resets. Nothing guesses — every recommendati
 |---|---|
 | Auth (email/password) | ✅ built |
 | Tap-first check-in (bean → loudest → context → want) | ✅ built |
-| The Ledger — Year Grid, day view, journal ladder rungs 0-3 | ✅ built |
+| The Ledger — Year Grid, day view, full journal ladder (rungs 0-5) | ✅ built |
 | Deterministic recommender (§13's rule chain) | ✅ built |
 | Safety Net (signs / what's worked / people / verified lines) | ✅ built |
-| Ride the Wave, Card Deck, What's Blocking Me?, 5-4-3-2-1 | ✅ built |
+| The 14-day Path + the Toolkit page | ✅ built |
+| Passcode lock on the Ledger and the Vault | ✅ built |
+| Full Toolkit — every catalog module in §10 has working code: Ground & Settle, Ride the Wave, Body Settle, Cool the Storm, 5-4-3-2-1, What's Blocking Me?, Task Decomposer, Priority Lens, Time Container, Energy-Aware Week, Focus Setup, One Small Action, Values to Action, Before/After, Gentle Rhythm, Opposite Action, Card Deck, Worry Sorter, Worry Window, Thought Record, ABC Model, Behavioural Experiment, Problem Ladder, and the Vault (Safety Gateway, Trigger Map, Mooring Lines, Lapse Review, Context Log) | ✅ built |
 | Patterns — day-3 first reflection, day-7 week reflection, what-helps-most, factor co-occurrence | ✅ built |
-| Ground & Settle, Task Decomposer, One Small Action, Time Container, Priority Lens, Values to Action, Energy-Aware Week | ✅ built (pre-existing) |
-| Substance-use Vault (consent-gated: Trigger Map, Mooring Lines, Lapse Review, Safety Gateway) | ✅ built (pre-existing) |
-| Worksheet engine (4 templates: Thought Record, ABC Model, Behavioural Experiment, Opposite Action) | ✅ built (pre-existing) |
-| Tracking/insights, export/delete | ✅ built (pre-existing) |
+| Tracking/insights, export/delete | ✅ built |
 | AI, of any kind | ❌ removed entirely (was a narrow, guarded pilot in v1 — see §13 for why it's gone) |
-| The 14-day Path, onboarding, journal rungs 4-5, Worry Sorter/Window, Before/After | ⏳ not yet built (Phase C) |
-| Passcode lock, Vault Context Log, remaining catalog modules, clinical review | ⏳ not yet built (Phase D) |
-| Hindi, local-only mode, offline-first | ⏳ not yet built (Phase E) |
+| Clinical sign-off on the therapy content + evidence register (§17) | ✅ done — recorded in `docs/HANDOFFS.md`, not published on the site |
+| Hindi | ❌ not building — permanent decision, see §18 |
+| Local-only / offline mode | ❌ not building — this is a website, not a native app, see §18 |
+| Crisis directory | ✅ national lines + 6 verified regional/NGO helplines; growing over time as more are sourced and verified (§19 Phase E) |
+| "My Goal, My Direction" as a standalone module | ⏳ not built — the catalog itself treats Trigger Map's own goal picker as already covering this |
 
-If you're reading the code and something looks unfinished or half-wired, check the redesign doc's roadmap (§19) before assuming it's a bug — a lot of the catalog is intentionally sequenced, not missing.
+If you're reading the code and something looks unfinished or half-wired, check the redesign doc's roadmap (§19) before assuming it's a bug.
 
 ---
 

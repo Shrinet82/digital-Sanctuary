@@ -30,7 +30,7 @@ Digital Sanctuary is a web app for people living with **overlapping** mental-hea
 
 ## 4. Where things actually stand (check this before assuming something's missing)
 
-Read [`README.md`](./README.md)'s "What's actually built right now" table — it's kept current. Short version: Phase A (the Spine: check-in v2, the Ledger, Safety Net, tests/CI, AI removal) and Phase B (the Hold: Ride the Wave, Card Deck, What's Blocking Me?, 5-4-3-2-1, the Patterns day-3 reflection) are both done. Phase C (the 14-day Path, onboarding, journal rungs 4-5, Worry Sorter/Window, Before/After) has not started.
+Read [`README.md`](./README.md)'s "What's actually built right now" table — it's kept current. Short version: Phases A through D are done — the full module catalog, the 14-day Path, passcode lock, and the Vault's Context Log all exist, and the founder has signed off on the therapy content and evidence register (§17) in consultation with the consulting psychiatrist, recorded in `docs/HANDOFFS.md`. Hindi and local-only/offline mode were considered and are permanently out of scope (§18) — don't build toward either. What's left is Phase E's ongoing crisis-directory growth (add more verified regional helplines to `local_resources` over time — no new mechanism, just more rows) and the still-open §18 items (self-harm scope, distribution).
 
 ## 5. The check-in, in one paragraph
 

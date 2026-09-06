@@ -11,6 +11,54 @@ lands here. Check items off as you complete them.
 
 ---
 
+## Product decisions on record
+
+These are founder decisions, not engineering judgment calls — recorded here so
+the reasoning and status don't live only in a chat log. See
+`digital-sanctuary-redesign.md` §17/§18 for the fuller write-up of each.
+
+### ✅ Clinical sign-off — granted (2026-09-06)
+
+The founder has personally reviewed and signed off on the therapy content and
+the evidence register (`digital-sanctuary-redesign.md` §17), in consultation
+with the consulting psychiatrist. This is recorded here **internally only** —
+it is not published anywhere on the site, and it isn't a substitute for a
+fuller external clinical review process later if one happens. The sign-off
+covers the catalog as it stood on this date; anything added afterward still
+needs to go through the same register-and-signoff step before it ships. Still
+open per §18: the self-harm-scope question for Ride the Wave, to be revisited
+with the clinical reviewer.
+
+### ✅ No Hindi — permanent (2026-09-06)
+
+English-only, not a phase-1 gap. The target users function in English on
+their phones. Removed the unused `profiles.language` column (pure i18n
+scaffolding, never read or written anywhere in the app — see migration
+`0016_remove_language_column`) and closed out the Hindi item in the
+redesign doc's open-decisions list.
+
+### ✅ No offline / local-only mode — permanent (2026-09-06)
+
+This is a website, not a native app, so reliable on-device-only storage
+isn't something to promise. Not being revisited unless the product becomes a
+native app. No scaffolding existed for this in code (no service worker, no
+offline-first data layer) — nothing to remove beyond the roadmap/open-decision
+text, closed out alongside the Hindi decision.
+
+### 🤖 Crisis directory — expanded (2026-09-06)
+
+Added 6 verified regional/NGO helplines to `local_resources` (migration
+`0017_expand_crisis_directory`) — Vandrevala Foundation, iCALL (TISS),
+Sneha (Chennai), Roshni Trust (Hyderabad), Maithri (Kochi), and Parivarthan
+(Bengaluru). Every number was looked up live and cross-checked against the
+organisation's own official site the same day; each row's `source_url` and
+`verified_at` reflect that. Same mechanism as before — flat `region = 'IN'`
+list, no per-state routing or auto-detection — just more rows. This is an
+ongoing thing, not a one-time list: send more verified numbers with an
+official source whenever you have them, and they can be added the same way.
+
+---
+
 ## Environment reference
 
 | Thing | Value |
@@ -98,21 +146,30 @@ id/secret into Supabase → Auth → Providers → Google. Not needed yet.
 - [x] 🤖 `delete_substance_use_data()` erases just the vault, leaving the
       account intact — verified.
 
-### ⏳ Verify the crisis resources for your region
+### ⏳ Sanity-check the crisis resources yourself
 
-I seeded **India** only, each row sourced and dated:
+Now 9 rows, each sourced and dated — the 3 national government lines plus 6
+regional/NGO helplines added 2026-09-06 (see "Crisis directory — expanded"
+above for the full list and sourcing method):
 
 | Service | Contact | Source |
 |---|---|---|
 | National emergency | **112** | india.gov.in |
 | Tele-MANAS (MoHFW) | **14416** / 1-800-891-4416 | telemanas.mohfw.gov.in |
 | KIRAN (MoSJE) | **1800-599-0019** | socialjustice.gov.in |
+| Vandrevala Foundation | **+91 9999 666 555** | vandrevalafoundation.com |
+| iCALL (TISS) | **022-2552-1111** | icallhelpline.org |
+| Sneha (Chennai) | **044-2464-0050** | snehaindia.org |
+| Roshni Trust (Hyderabad) | **8142020033** | roshinitrust.com |
+| Maithri (Kochi) | **0484-2540530** | maithrikochi.in |
+| Parivarthan (Bengaluru) | **7676602602** | parivarthan.org |
 
 **Please sanity-check these yourself before anyone else uses the app** — a wrong
-crisis number is the most harmful bug this product could ship. If you want other
-regions, send me verified numbers with an official source URL and I'll add them.
-Until a region has verified rows, the Safety Gateway deliberately shows nothing
-rather than guessing.
+crisis number is the most harmful bug this product could ship. Numbers were
+verified live against each organisation's own site, but NGO helplines can
+change or shut down with less notice than a government line. If you have more
+verified numbers with an official source URL, send them and they can be added
+the same way — this list is meant to keep growing (§19 Phase E), not stay at 9.
 
 ## Phase 6 — The narrow AI pilot ✅
 

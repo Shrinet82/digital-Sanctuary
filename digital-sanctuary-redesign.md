@@ -47,7 +47,7 @@ Nothing in it grades you. Nothing resets. Nothing guesses.
 - A lapse costs you nothing. No streak, no reset, no score.
 - Your data leaves in one tap and dies in one tap.
 
-**Who it's for.** Adults in India who are managing themselves — between therapists, waiting for one, priced out of one, or supplementing one. English at launch, Hindi in phase 3.
+**Who it's for.** Adults in India who are managing themselves — between therapists, waiting for one, priced out of one, or supplementing one. English-only, permanently: the people we're building for function in English on their phones, and this isn't a phase-1 gap awaiting a later pass. Decided by the founder in consultation with the consulting psychiatrist. See §18.
 
 **Who it's not for.** People in acute crisis needing a human. We route those out fast and honestly, and never pretend to be treatment.
 
@@ -415,7 +415,7 @@ Anything that varies day to day — journal prompts, deck cards, Path content, a
 
 ## 14 · Privacy, data, ownership
 
-**Default posture.** Account optional. A local-only mode where nothing leaves the device is the ideal and should be evaluated seriously for v2 — several of the best apps in this space have no accounts at all.
+**Default posture.** Account optional. No local-only or offline mode: this is a website, not a native app, and a browser can't promise reliable on-device-only storage the way a native app could. Decided by the founder in consultation with the consulting psychiatrist — not being revisited unless the product becomes a native app. See §18.
 
 **The Vault.** Substance-use data sits behind an explicit consent gate enforced at the database policy level, not in the UI. Without an active consent record the rows are unreadable *even to their owner*. Revoke freezes; delete is a separate, deliberate act. This already works and must survive the overhaul untouched.
 
@@ -562,6 +562,8 @@ Three cautions:
 
 Under this policy, launch requires a qualified reviewer to sign off the register and every authored bank — cards, activities, prompts, the Path. Find the reviewer early; it shapes what gets built, not just what gets approved.
 
+**Status: signed off.** The founder has personally reviewed and signed off on the therapy content and the evidence register above, in consultation with the consulting psychiatrist. Recorded internally in `docs/HANDOFFS.md` — this is not published on the site, and it isn't a substitute for the fuller external clinical review process should one happen later. Any new module or authored bank added after this sign-off still needs to go through this same register-and-signoff step before it ships; the sign-off covers what exists today, not what gets added next.
+
 ---
 
 ## 18 · Open decisions
@@ -574,14 +576,14 @@ Under this policy, launch requires a qualified reviewer to sign off the register
 - ~~Visual direction~~ — candy neo-brutalism stays.
 - ~~Card Deck~~ — ships, framed as self-affirmation, not treatment. Decided with the consulting psychiatrist. See §17.
 - ~~5-4-3-2-1~~ — ships as a standard toolkit item, no special hedging needed.
+- ~~Finding the clinical reviewer~~ — done. A consulting psychiatrist is engaged, and the founder has reviewed and signed off on the therapy content and evidence register. See §17.
+- ~~Hindi~~ — not building it. English-only is a permanent decision, not a phase-1 gap: the people we're building for function in English on their phones. Decided by the founder in consultation with the consulting psychiatrist.
+- ~~Local-only / offline mode~~ — not building it. This is a website, not a native app, so reliable on-device-only storage isn't available the way it would be in a native app. Not being revisited unless that changes. Decided by the founder in consultation with the consulting psychiatrist.
 
 **Still open:**
 
 1. **Self-harm scope.** Ride the Wave borrows its structure from tools built for self-harm urges. Do we name that lane? Materially different duty of care. Default for v2: **no** — build for craving, panic and overwhelm, revisit with the clinical reviewer. Note that under §17 this decision is now easier: the protocols for it exist and are trialled, so the question is purely about duty of care, not about whether we'd be inventing anything.
-2. **Finding the clinical reviewer.** Now blocking, and now confirmed already in progress with a consulting psychiatrist — formalise scope of their review against the full evidence register.
-3. **Distribution.** Still nobody has written a line about how a user hears this exists. Sharper now that it's free — no acquisition cost pressure, but no growth engine either.
-4. **Hindi.** Phase E in the roadmap, but for an India-first product with an India-first crisis directory, English-only is a real limit on reach. Note that WHO and several Indian institutions publish validated Hindi materials, which makes this cheaper than it looks.
-5. **Local-only mode.** Strongest possible privacy position. Costs sync and multi-device.
+2. **Distribution.** Still nobody has written a line about how a user hears this exists. Sharper now that it's free — no acquisition cost pressure, but no growth engine either.
 
 ---
 
@@ -600,7 +602,7 @@ Ride the Wave + activity bank · Card Deck + card banks · What's Blocking Me? �
 Remaining modules · Vault Context Log · passcode lock · export/delete polish · clinical review pass.
 
 **Phase E — Reach**
-Hindi · local-only mode evaluation · offline-first · regional crisis directory expansion.
+Regional crisis directory expansion — more verified state and city helplines added to the existing directory over time. (Hindi and local-only/offline mode were considered and are permanently out of scope — see §18.)
 
 ---
 
