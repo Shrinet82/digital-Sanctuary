@@ -1,26 +1,19 @@
 /**
- * The recommendation engine.
+ * The recommendation engine — v2.
  *
- * DETERMINISTIC BY DESIGN — see docs/09-safety-and-privacy.md.
- * Every recommendation comes from a fixed, inspectable rule and carries
- * a plain-language `reason` we show to the user. No AI decides anything
- * here, and nothing in this file infers a diagnosis or assesses risk.
+ * DETERMINISTIC BY DESIGN — see digital-sanctuary-redesign.md §13.
+ * A single ordered rule chain, first match wins. Every result carries a
+ * plain-language `reason` shown to the user verbatim. No AI decides
+ * anything here, and nothing in this file infers a diagnosis or risk.
+ *
+ * This implements §13's chain, items 2-11 (item 1, the persistent
+ * "urgent" control, lives outside the check-in as its own always-visible
+ * button — see components/UrgentHelpButton.tsx — and isn't a rule here).
  */
 
-export type CheckIn = {
-  distress: number | null;
-  energy: number | null;
-  attention: number | null;
-  urge: number | null;
-  mode: Mode | null;
-};
+import type { CheckIn } from "./checkin";
+import { seededIndex } from "./seed";
 
-export type Mode = "calm" | "act" | "plan" | "reflect" | "connect";
-
-/**
- * Module identifiers are data-driven (see lib/modules.ts), so this is a plain
- * string rather than a closed union — the catalog is the source of truth.
- */
 export type ModuleId = string;
 
 export type Suggestion = {
@@ -72,112 +65,173 @@ export const MODULES: Record<ModuleId, Suggestion> = {
       "Map what tends to come before an urge, pre-choose an alternative, and name who you'd contact.",
     condition: "Substance use",
   },
+  "values-to-action": {
+    moduleId: "values-to-action",
+    title: "Values to Action",
+    description:
+      "Not what you should do — what matters to you. Then one tiny, voluntary step toward it.",
+    condition: "Low mood",
+  },
+  "time-container": {
+    moduleId: "time-container",
+    title: "Time Container",
+    description:
+      "One block of focus with a soft start and a soft landing. The container does the holding.",
+    condition: "ADHD",
+  },
+  "priority-lens": {
+    moduleId: "priority-lens",
+    title: "Priority Lens",
+    description:
+      "When everything feels urgent: sort each task through one lens and get a list of three, never a wall.",
+    condition: "ADHD",
+  },
+  "energy-aware-week": {
+    moduleId: "energy-aware-week",
+    title: "Energy-Aware Week",
+    description:
+      "A week planned from your real capacity, not an ideal one. Move or drop anything, no penalty.",
+    condition: "Low mood",
+  },
 };
+
+/**
+ * Modules the "surprise me" rule (§13 item 10) is allowed to pick from.
+ * Deliberately excludes the vault (needs consent) and Safety Gateway
+ * (never something to stumble into by chance).
+ */
+const SURPRISE_POOL: ModuleId[] = [
+  "ground-and-settle",
+  "one-small-action",
+  "values-to-action",
+  "time-container",
+  "priority-lens",
+  "energy-aware-week",
+];
 
 function pick(ids: ModuleId[]): Suggestion[] {
   return ids.map((id) => MODULES[id]);
 }
 
-/**
- * Returns one primary action plus up to two alternatives.
- * Rules are ordered: safety-relevant and lowest-effort options come first.
- */
-export function recommend(checkIn: CheckIn): Recommendation {
-  const distress = checkIn.distress ?? 0;
-  const energy = checkIn.energy ?? 0;
-  const attention = checkIn.attention ?? 0;
-  const urge = checkIn.urge ?? 0;
-  const mode = checkIn.mode;
-
-  // Rule 1 — a strong urge: support and safety come before any exercise.
-  // Safety Gateway is deliberately first because it needs no consent gate,
-  // so nobody in a difficult moment hits a permissions screen.
-  if (urge >= 8) {
-    return {
-      ...MODULES["safety-gateway"],
-      reason:
-        "You marked your urge as strong, so support comes before anything else. Nothing here is recorded, and urgent help stays one tap away.",
-      alternatives: pick(["trigger-map", "ground-and-settle"]),
-    };
-  }
-
-  // Rule 1b — a noticeable urge, but not overwhelming: planning helps.
-  if (urge >= 5) {
-    return {
-      ...MODULES["trigger-map"],
-      reason:
-        "There's an urge around. Deciding your alternative in advance shortens the gap between the urge and what you do next.",
-      alternatives: pick(["ground-and-settle", "safety-gateway"]),
-    };
-  }
-
-  // Rule 2 — high intensity with little energy: the smallest, calmest option.
-  if (distress >= 8 && energy <= 3) {
-    return {
-      ...MODULES["ground-and-settle"],
-      reason:
-        "You said it feels very intense and your energy is low, so this asks the least of you.",
-      alternatives: pick(["one-small-action", "task-decomposer"]),
-    };
-  }
-
-  // Rule 3 — stuck or scattered: find the very next physical step.
-  // NOTE: a skipped slider is `null`, which must NOT be read as 0 — otherwise
-  // an empty check-in looks like "scattered attention" and we'd push a task
-  // at someone who told us nothing. Only fire on an explicit low rating.
-  const attentionGiven = checkIn.attention !== null;
-  if (mode === "plan" || (attentionGiven && attention <= 3 && distress <= 6)) {
-    return {
-      ...MODULES["task-decomposer"],
-      reason:
-        "You wanted to get unstuck and focus felt scattered, so we start with one concrete next step.",
-      alternatives: pick(["ground-and-settle", "one-small-action"]),
-    };
-  }
-
-  // Rule 4 — wanting calm, or noticeable distress.
-  if (mode === "calm" || distress >= 5) {
-    return {
-      ...MODULES["ground-and-settle"],
-      reason:
-        distress >= 5
-          ? "Your intensity is in the moderate range, so settling the body first tends to help."
-          : "You said you wanted to feel calmer, so let's start there.",
-      alternatives: pick(["one-small-action", "task-decomposer"]),
-    };
-  }
-
-  // Rule 5 — some capacity and a wish to do something.
-  if (mode === "act" || mode === "connect" || (energy >= 4 && distress <= 5)) {
-    return {
-      ...MODULES["one-small-action"],
-      reason:
-        "You have some energy and wanted to do one small thing, so this is a good fit.",
-      alternatives: pick(["ground-and-settle", "task-decomposer"]),
-    };
-  }
-
-  // Default — nothing urgent stood out; offer the gentlest starting point.
-  return {
-    ...MODULES["ground-and-settle"],
-    reason:
-      "Nothing urgent stood out, so we start somewhere gentle. Pick any option below instead if it fits better.",
-    alternatives: pick(["one-small-action", "task-decomposer"]),
-  };
+function result(
+  moduleId: ModuleId,
+  reason: string,
+  alternatives: ModuleId[]
+): Recommendation {
+  return { ...MODULES[moduleId], reason, alternatives: pick(alternatives) };
 }
 
-export const MODE_LABELS: { value: Mode; label: string; emoji: string }[] = [
-  { value: "calm", label: "chill my nervous system", emoji: "🌊" },
-  { value: "act", label: "do one small thing", emoji: "🌱" },
-  { value: "plan", label: "get unstuck", emoji: "🧠" },
-  { value: "reflect", label: "reflect privately", emoji: "📓" },
-  { value: "connect", label: "feel less alone", emoji: "🫶" },
-];
+/**
+ * Returns one primary action plus up to two alternatives, from a fixed,
+ * ordered rule chain — first match wins (§13).
+ *
+ * `seedKey` powers the "surprise me" rule so the pick is reproducible
+ * (same day + same person = same surprise) rather than random. Pass
+ * `${dateString}:${userId}` when the caller knows the user; falls back to
+ * date-only, which is still deterministic, just not per-user.
+ */
+export function recommend(
+  checkIn: CheckIn,
+  seedKey: string = new Date().toISOString().slice(0, 10)
+): Recommendation {
+  const { state, loudest, want } = checkIn;
 
-export function intensityLabel(v: number): string {
-  if (v <= 1) return "Barely";
-  if (v <= 3) return "A little";
-  if (v <= 6) return "Moderate";
-  if (v <= 8) return "High";
-  return "Very high";
+  // 2. Rough + craving: hold on through the urge itself.
+  // PLACEHOLDER (Phase B): Ride the Wave doesn't exist yet — Ground & Settle
+  // is the nearest built tool for "something to do while this passes."
+  if (state === "rough" && loudest.includes("craving")) {
+    return result(
+      "ground-and-settle",
+      "You said it's rough right now and craving is loud. Slow, paced breathing gives you something to do while it passes.",
+      ["trigger-map", "one-small-action"]
+    );
+  }
+
+  // 3. Rough, on its own: the smallest, calmest option.
+  if (state === "rough") {
+    return result(
+      "ground-and-settle",
+      "You said it's rough right now, so this asks the least of you.",
+      ["one-small-action", "task-decomposer"]
+    );
+  }
+
+  // 4. Explicitly asked for help through an urge.
+  // PLACEHOLDER (Phase B): same substitution as rule 2.
+  if (want === "urge") {
+    return result(
+      "ground-and-settle",
+      "You said you want to get through this urge. Steady, paced breathing is the best tool we have for that right now.",
+      ["trigger-map", "one-small-action"]
+    );
+  }
+
+  // 5. Asked to be calmed down.
+  if (want === "calm") {
+    return result(
+      "ground-and-settle",
+      "You said you wanted to feel calmer, so let's start there.",
+      ["one-small-action", "task-decomposer"]
+    );
+  }
+
+  // 6. Asked for help starting.
+  // PLACEHOLDER (Phase B): "What's Blocking Me?" doesn't exist yet —
+  // Task Decomposer is today's real entry point for "I can't start."
+  if (want === "start") {
+    return result(
+      "task-decomposer",
+      "You said you want help starting, so let's find the smallest first step.",
+      ["ground-and-settle", "priority-lens"]
+    );
+  }
+
+  // 7. Asked for a lift.
+  if (want === "lift") {
+    return result(
+      "one-small-action",
+      "You said you want a lift, so here's one small, achievable thing.",
+      ["values-to-action", "ground-and-settle"]
+    );
+  }
+
+  // 8. "Can't start" is the loudest thing, even without saying so directly.
+  if (loudest.includes("cant_start")) {
+    return result(
+      "task-decomposer",
+      "Can't start was the loudest thing you flagged, so we start with one concrete next step.",
+      ["priority-lens", "time-container"]
+    );
+  }
+
+  // 9. Anxious is the loudest thing.
+  // PLACEHOLDER (Phase B): Card Deck doesn't exist yet — Ground & Settle is
+  // today's real anxiety tool.
+  if (loudest.includes("anxious")) {
+    return result(
+      "ground-and-settle",
+      "Anxious was the loudest thing you flagged, so let's settle the body first.",
+      ["one-small-action", "task-decomposer"]
+    );
+  }
+
+  // 10. "Surprise me" — date-seeded, reproducible, never random.
+  if (want === "surprise") {
+    const idx = seededIndex(seedKey, SURPRISE_POOL.length);
+    const moduleId = SURPRISE_POOL[idx];
+    const rest = SURPRISE_POOL.filter((id) => id !== moduleId).slice(0, 2);
+    return result(
+      moduleId,
+      "You asked us to pick. This is today's pick — same day, same pick, if you check back.",
+      rest
+    );
+  }
+
+  // 11. Fallback — nothing above matched (e.g. "just log it" with a flat
+  // or good state and nothing loud). Offer the gentlest starting point.
+  return result(
+    "one-small-action",
+    "Nothing urgent stood out, so here's a gentle starting point. Pick something else below if it fits better.",
+    ["ground-and-settle", "values-to-action"]
+  );
 }

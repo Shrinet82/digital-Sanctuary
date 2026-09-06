@@ -5,6 +5,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { FactorLogger } from "@/components/tracking/FactorLogger";
 import { DataControls } from "@/components/tracking/DataControls";
 import { MODULES } from "@/lib/recommend";
+import { STATE_COLOR, stateEmoji, stateLabel, type CheckInState } from "@/lib/checkin";
 import { getAllWorksheets } from "@/lib/worksheets/registry";
 import {
   factorObservations,
@@ -38,8 +39,8 @@ export default async function InsightsPage() {
         .eq("id", user.id)
         .maybeSingle(),
       supabase
-        .from("daily_checkins")
-        .select("distress, energy, created_at")
+        .from("check_ins")
+        .select("log_date, state, created_at")
         .gte("created_at", sinceIso)
         .order("created_at"),
       supabase
@@ -79,7 +80,6 @@ export default async function InsightsPage() {
   }
 
   const loggedDays = new Set(factorRows.map((f) => f.log_date)).size;
-  const maxDistress = Math.max(...bars.map((b) => b.distress ?? 0), 1);
 
   return (
     <main className="max-w-3xl mx-auto px-6">
@@ -134,25 +134,25 @@ export default async function InsightsPage() {
           ) : (
             <>
               <p className="text-sm text-ink-soft mt-0 mb-4">
-                How intense things felt, day by day. A gap just means you
+                Your dominant state, day by day. A gap just means you
                 didn&apos;t check in — that isn&apos;t a missed day.
               </p>
-              <div className="flex items-end gap-2 h-36 px-1">
+              <div className="flex gap-2 px-1">
                 {bars.map((b) => (
                   <div key={b.date} className="flex-1 flex flex-col items-center gap-2">
-                    <div className="flex-1 w-full flex items-end">
-                      {b.distress === null ? (
-                        <div className="w-full h-1.5 rounded-full bg-surface-2 border-2 border-dashed border-ink/25" />
-                      ) : (
-                        <div
-                          className="w-full rounded-t-lg border-2 border-ink bg-gradient-to-t from-teal to-violet shadow-pop-sm"
-                          style={{
-                            height: `${Math.max((b.distress / maxDistress) * 100, 8)}%`,
-                          }}
-                          title={`${b.distress} on ${b.date}`}
-                        />
-                      )}
-                    </div>
+                    {b.state === null ? (
+                      <div
+                        className="w-full aspect-square rounded-xl bg-surface-2 border-2 border-dashed border-ink/25"
+                        title={`No check-in on ${b.date}`}
+                      />
+                    ) : (
+                      <div
+                        className={`w-full aspect-square rounded-xl border-2 border-ink grid place-items-center text-xl shadow-pop-sm ${STATE_COLOR[b.state as CheckInState]}`}
+                        title={`${stateLabel(b.state as CheckInState)} on ${b.date}`}
+                      >
+                        {stateEmoji(b.state as CheckInState)}
+                      </div>
+                    )}
                     <span className="text-[11px] font-bold text-ink-faint">
                       {b.label}
                     </span>
@@ -168,8 +168,8 @@ export default async function InsightsPage() {
                 ))}
               </div>
               <p className="text-xs text-ink-faint mt-4 mb-0">
-                Taller means it felt more intense that day. Dots underneath mark
-                a practice — presence, not performance.
+                Each square is that day&apos;s dominant check-in. Dots underneath
+                mark a practice — presence, not performance.
               </p>
             </>
           )}

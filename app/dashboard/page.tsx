@@ -2,10 +2,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
-import { MODULES, recommend, type Mode } from "@/lib/recommend";
 import { MODULE_LIST } from "@/lib/modules";
+import { recommend } from "@/lib/recommend";
+import type { CheckInState, Loudest, Want } from "@/lib/checkin";
 import { ModuleGrid } from "@/components/ModuleGrid";
 import { getAllWorksheets } from "@/lib/worksheets/registry";
+import { WeekStrip } from "@/components/ledger/WeekStrip";
+import { buildRecentStrip, type CheckInLite } from "@/lib/ledger";
 
 export const metadata = { title: "Your dashboard · Digital Sanctuary" };
 
@@ -33,7 +36,10 @@ export default async function DashboardPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [{ data: profile }, { data: latestCheckIn }, { data: sessions }] =
+  const since7 = new Date();
+  since7.setDate(since7.getDate() - 6);
+
+  const [{ data: profile }, { data: latestCheckIn }, { data: sessions }, { data: weekCheckIns }] =
     await Promise.all([
       supabase
         .from("profiles")
@@ -41,8 +47,8 @@ export default async function DashboardPage() {
         .eq("id", user.id)
         .maybeSingle(),
       supabase
-        .from("daily_checkins")
-        .select("distress, energy, attention, urge, mode, created_at")
+        .from("check_ins")
+        .select("state, loudest, context, want, created_at")
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle(),
@@ -51,22 +57,36 @@ export default async function DashboardPage() {
         .select("module_id, outcome, rating_before, rating_after, started_at")
         .order("started_at", { ascending: false })
         .limit(5),
+      supabase
+        .from("check_ins")
+        .select("log_date, state, created_at")
+        .gte("log_date", since7.toISOString().slice(0, 10))
+        .order("created_at", { ascending: true }),
     ]);
 
   const name = profile?.display_name?.trim() || null;
   const worksheets = getAllWorksheets();
 
-  // Same deterministic engine as the check-in page.
-  const reco = recommend({
-    distress: latestCheckIn?.distress ?? null,
-    energy: latestCheckIn?.energy ?? null,
-    attention: latestCheckIn?.attention ?? null,
-    urge: latestCheckIn?.urge ?? null,
-    mode: (latestCheckIn?.mode as Mode | null) ?? null,
-  });
-
   const hasCheckIn = Boolean(latestCheckIn);
+
+  // Same deterministic engine as the check-in page.
+  const reco = hasCheckIn
+    ? recommend(
+        {
+          state: latestCheckIn!.state as CheckInState,
+          loudest: (latestCheckIn!.loudest ?? []) as Loudest[],
+          context: (latestCheckIn!.context ?? []) as string[],
+          want: (latestCheckIn!.want as Want | null) ?? null,
+        },
+        `${new Date().toISOString().slice(0, 10)}:${user.id}`
+      )
+    : recommend(
+        { state: "flat", loudest: [], context: [], want: null },
+        `${new Date().toISOString().slice(0, 10)}:${user.id}`
+      );
+
   const history = sessions ?? [];
+  const weekCells = buildRecentStrip((weekCheckIns ?? []) as CheckInLite[], 7);
 
   return (
     <main className="max-w-4xl mx-auto px-6">
@@ -86,6 +106,20 @@ export default async function DashboardPage() {
         <Link href="/checkin" className="ds-btn ds-btn-ghost no-underline mt-5">
           {hasCheckIn ? "New check-in" : "Start a check-in →"}
         </Link>
+      </section>
+
+      {/* LEDGER strip */}
+      <section className="pb-8">
+        <div className="flex items-center gap-3 mb-3 flex-wrap">
+          <h2 className="text-xl">📔 This week</h2>
+          <Link
+            href="/ledger"
+            className="text-sm font-bold text-violet-deep underline underline-offset-2 ml-auto"
+          >
+            Open your Ledger →
+          </Link>
+        </div>
+        <WeekStrip cells={weekCells} />
       </section>
 
       {/* NOW */}

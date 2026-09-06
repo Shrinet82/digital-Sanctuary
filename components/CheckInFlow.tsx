@@ -3,37 +3,91 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Slider } from "@/components/Slider";
 import { saveCheckIn } from "@/app/actions/practice";
+import { recommend, type Recommendation } from "@/lib/recommend";
 import {
-  MODE_LABELS,
-  recommend,
-  type Mode,
-  type Recommendation,
-} from "@/lib/recommend";
+  DEFAULT_CONTEXT_CHIPS,
+  LOUDEST_OPTIONS,
+  MAX_LOUDEST,
+  STATES,
+  WANT_OPTIONS,
+  type CheckInState,
+  type Loudest,
+  type Want,
+} from "@/lib/checkin";
+
+type Screen = 0 | 1 | 2 | 3;
+
+function Chip({
+  active,
+  disabled,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  disabled?: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      disabled={disabled}
+      onClick={onClick}
+      className={`border-2 border-ink rounded-full px-4 py-2.5 text-[14.5px] font-bold shadow-pop-sm transition-transform hover:-translate-y-px disabled:opacity-40 disabled:hover:translate-y-0 ${
+        active ? "bg-violet text-white" : "bg-surface"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
 
 export function CheckInFlow() {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
-  const [distress, setDistress] = useState<number | null>(null);
-  const [energy, setEnergy] = useState<number | null>(null);
-  const [attention, setAttention] = useState<number | null>(null);
-  const [urge, setUrge] = useState<number | null>(null);
-  const [mode, setMode] = useState<Mode | null>(null);
+  const [screen, setScreen] = useState<Screen>(0);
+  const [state, setState] = useState<CheckInState | null>(null);
+  const [loudest, setLoudest] = useState<Loudest[]>([]);
+  const [context, setContext] = useState<string[]>([]);
 
   const [result, setResult] = useState<Recommendation | null>(null);
+  const [justLogged, setJustLogged] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit() {
-    const checkIn = { distress, energy, attention, urge, mode };
-    // Rules run locally and instantly — the save is just persistence.
-    setResult(recommend(checkIn));
-    setError(null);
+  function toggleLoudest(v: Loudest) {
+    setLoudest((prev) => {
+      if (prev.includes(v)) return prev.filter((x) => x !== v);
+      if (prev.length >= MAX_LOUDEST) return prev;
+      return [...prev, v];
+    });
+  }
+
+  function toggleContext(v: string) {
+    setContext((prev) =>
+      prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]
+    );
+  }
+
+  function finish(want: Want | null) {
+    if (!state) return;
+    const checkIn = { state, loudest, context, want };
+
     startTransition(async () => {
       const res = await saveCheckIn(checkIn);
       if (!res.ok) setError(res.error ?? "We couldn't save that check-in.");
     });
+
+    // "Just log it" (or nothing chosen) ends the flow here — the log is
+    // valid on its own, and we never push an exercise on someone who
+    // didn't ask for one (§5).
+    if (want === null || want === "log") {
+      setJustLogged(true);
+      return;
+    }
+    setResult(recommend(checkIn));
   }
 
   if (result) {
@@ -95,80 +149,145 @@ export function CheckInFlow() {
     );
   }
 
+  if (justLogged) {
+    return (
+      <div className="ds-card">
+        <span className="ds-pill bg-mint text-[#0B5C41] mb-3">✓ logged</span>
+        <h2 className="text-2xl">That&apos;s it. It&apos;s logged.</h2>
+        <p className="text-ink-soft mt-2 max-w-[48ch]">
+          A check-in is a complete entry on its own — nothing else is
+          required. It&apos;ll show up in your Ledger today.
+        </p>
+        <p className="text-xs text-ink-faint mt-4">
+          {pending ? "Saving…" : error ?? "Saved privately to your account."}
+        </p>
+        <div className="flex gap-3 flex-wrap mt-5">
+          <Link href="/ledger" className="ds-btn ds-btn-primary no-underline">
+            See your Ledger →
+          </Link>
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="ds-btn ds-btn-ghost"
+          >
+            Back to dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="ds-card">
-      <div className="flex justify-between items-center flex-wrap gap-2">
+      <div className="flex justify-between items-center flex-wrap gap-2 mb-5">
         <span className="ds-pill bg-mint text-[#0B5C41]">
           🧮 rule-based · no AI reads this
         </span>
         <span className="text-sm text-ink-faint">
-          skip anything that isn&apos;t it today
+          {screen + 1} of 4 — tap what fits, skip what doesn&apos;t
         </span>
       </div>
 
-      <Slider
-        id="distress"
-        label="How intense does it feel right now?"
-        lowLabel="Calm"
-        highLabel="Very intense"
-        value={distress}
-        onChange={setDistress}
-      />
-      <Slider
-        id="energy"
-        label="Energy"
-        lowLabel="Running on empty"
-        highLabel="Plenty"
-        value={energy}
-        onChange={setEnergy}
-      />
-      <Slider
-        id="attention"
-        label="Attention & focus"
-        lowLabel="Scattered / stuck"
-        highLabel="Clear"
-        value={attention}
-        onChange={setAttention}
-      />
-      <Slider
-        id="urge"
-        label="Any urge or craving?"
-        lowLabel="None"
-        highLabel="Strong"
-        value={urge}
-        onChange={setUrge}
-      />
+      {screen === 0 && (
+        <fieldset>
+          <legend className="font-bold text-lg mb-4">How are you, right now?</legend>
+          <div className="grid grid-cols-5 gap-2.5">
+            {STATES.map((s) => (
+              <button
+                key={s.value}
+                type="button"
+                aria-pressed={state === s.value}
+                onClick={() => {
+                  setState(s.value);
+                  setScreen(1);
+                }}
+                className={`flex flex-col items-center gap-1.5 border-2.5 border-ink rounded-[14px] py-4 shadow-pop-sm transition-transform hover:-translate-y-0.5 ${
+                  state === s.value ? "bg-violet-soft" : "bg-surface"
+                }`}
+              >
+                <span className="text-3xl">{s.emoji}</span>
+                <span className="text-[13px] font-bold">{s.label}</span>
+              </button>
+            ))}
+          </div>
+        </fieldset>
+      )}
 
-      <fieldset className="mt-6">
-        <legend className="font-bold text-sm mb-2">
-          Right now I mostly want to…
-        </legend>
-        <div className="flex gap-2.5 flex-wrap">
-          {MODE_LABELS.map((m) => (
-            <button
-              key={m.value}
-              type="button"
-              aria-pressed={mode === m.value}
-              onClick={() => setMode(mode === m.value ? null : m.value)}
-              className={`border-2 border-ink rounded-full px-4 py-2.5 text-[14.5px] font-bold shadow-pop-sm transition-transform hover:-translate-y-px ${
-                mode === m.value ? "bg-violet text-white" : "bg-surface"
-              }`}
-            >
-              <span className="mr-1.5">{m.emoji}</span>
-              {m.label}
+      {screen === 1 && (
+        <fieldset>
+          <legend className="font-bold text-lg mb-1">
+            What&apos;s loudest right now?
+          </legend>
+          <p className="text-sm text-ink-faint mb-4">
+            Pick up to {MAX_LOUDEST}. Optional.
+          </p>
+          <div className="flex gap-2.5 flex-wrap">
+            {LOUDEST_OPTIONS.map((l) => (
+              <Chip
+                key={l.value}
+                active={loudest.includes(l.value)}
+                disabled={
+                  !loudest.includes(l.value) && loudest.length >= MAX_LOUDEST
+                }
+                onClick={() => toggleLoudest(l.value)}
+              >
+                {l.label}
+              </Chip>
+            ))}
+          </div>
+          <div className="flex gap-3 flex-wrap mt-6">
+            <button onClick={() => setScreen(2)} className="ds-btn ds-btn-primary">
+              Continue →
             </button>
-          ))}
-        </div>
-      </fieldset>
+            <button onClick={() => setScreen(0)} className="ds-btn ds-btn-ghost">
+              ← Back
+            </button>
+          </div>
+        </fieldset>
+      )}
 
-      <div className="flex gap-3 flex-wrap mt-7">
-        <button onClick={handleSubmit} className="ds-btn ds-btn-primary">
-          Show me what might help ✨
-        </button>
-        <Link href="/dashboard" className="ds-btn ds-btn-ghost no-underline">
-          Skip
-        </Link>
-      </div>
+      {screen === 2 && (
+        <fieldset>
+          <legend className="font-bold text-lg mb-1">Anything going on?</legend>
+          <p className="text-sm text-ink-faint mb-4">Optional context.</p>
+          <div className="flex gap-2.5 flex-wrap">
+            {DEFAULT_CONTEXT_CHIPS.map((c) => (
+              <Chip
+                key={c}
+                active={context.includes(c)}
+                onClick={() => toggleContext(c)}
+              >
+                {c}
+              </Chip>
+            ))}
+          </div>
+          <div className="flex gap-3 flex-wrap mt-6">
+            <button onClick={() => setScreen(3)} className="ds-btn ds-btn-primary">
+              Continue →
+            </button>
+            <button onClick={() => setScreen(1)} className="ds-btn ds-btn-ghost">
+              ← Back
+            </button>
+          </div>
+        </fieldset>
+      )}
+
+      {screen === 3 && (
+        <fieldset>
+          <legend className="font-bold text-lg mb-4">What would help?</legend>
+          <div className="flex gap-2.5 flex-wrap">
+            {WANT_OPTIONS.map((w) => (
+              <Chip key={w.value} active={false} onClick={() => finish(w.value)}>
+                {w.label}
+              </Chip>
+            ))}
+          </div>
+          <div className="flex gap-3 flex-wrap mt-6">
+            <button onClick={() => setScreen(2)} className="ds-btn ds-btn-ghost">
+              ← Back
+            </button>
+          </div>
+        </fieldset>
+      )}
     </div>
   );
 }

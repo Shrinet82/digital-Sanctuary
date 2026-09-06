@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import type { Mode, ModuleId } from "@/lib/recommend";
+import type { ModuleId } from "@/lib/recommend";
+import type { CheckIn } from "@/lib/checkin";
 
 export type SaveResult = { ok: boolean; error?: string };
 
@@ -14,29 +15,27 @@ async function requireUser() {
   return { supabase, user };
 }
 
-/** Saves an optional 15-second check-in. Every field is skippable. */
-export async function saveCheckIn(input: {
-  distress: number | null;
-  energy: number | null;
-  attention: number | null;
-  urge: number | null;
-  mode: Mode | null;
-}): Promise<SaveResult> {
+/**
+ * Saves a check-in. Only `state` is ever required — everything else is
+ * whatever the user tapped, which may be nothing. This IS the day's log
+ * entry (§5/§6): it writes straight into the Ledger, no separate step.
+ */
+export async function saveCheckIn(input: CheckIn): Promise<SaveResult> {
   const { supabase, user } = await requireUser();
   if (!user) return { ok: false, error: "Please sign in first." };
 
-  const { error } = await supabase.from("daily_checkins").insert({
+  const { error } = await supabase.from("check_ins").insert({
     user_id: user.id,
-    distress: input.distress,
-    energy: input.energy,
-    attention: input.attention,
-    urge: input.urge,
-    mode: input.mode,
+    state: input.state,
+    loudest: input.loudest,
+    context: input.context,
+    want: input.want,
   });
 
   if (error) return { ok: false, error: error.message };
 
   revalidatePath("/dashboard");
+  revalidatePath("/ledger");
   return { ok: true };
 }
 

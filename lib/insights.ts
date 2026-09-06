@@ -10,6 +10,8 @@
  */
 
 import { getFactor } from "./factors";
+import { dominantState } from "./ledger";
+import type { CheckInState } from "./checkin";
 
 export type SessionRow = {
   module_id: string;
@@ -21,9 +23,18 @@ export type SessionRow = {
 };
 
 export type CheckInRow = {
-  distress: number | null;
-  energy: number | null;
+  log_date: string;
+  state: CheckInState;
   created_at: string;
+};
+
+/** Internal-only ordering for comparisons below — never shown to the user as a number. */
+const SEVERITY: Record<CheckInState, number> = {
+  rough: 0,
+  low: 1,
+  flat: 2,
+  okay: 3,
+  good: 4,
 };
 
 export type FactorRow = {
@@ -88,8 +99,8 @@ export function whatHelpsMost(sessions: SessionRow[]): HelpfulEntry[] {
 export type DayBar = {
   date: string;
   label: string;
-  /** Mean distress that day, if any check-in recorded it. */
-  distress: number | null;
+  /** That day's dominant state (§6.1), if any check-in recorded one. */
+  state: CheckInState | null;
   /** How many practices happened that day. Presence, not performance. */
   practices: number;
 };
@@ -107,22 +118,12 @@ export function weeklyShape(
     d.setDate(today.getDate() - i);
     const key = d.toISOString().slice(0, 10);
 
-    const dayCheckIns = checkIns.filter(
-      (c) => c.created_at.slice(0, 10) === key && c.distress !== null
-    );
-    const distress =
-      dayCheckIns.length > 0
-        ? Math.round(
-            (dayCheckIns.reduce((a, c) => a + (c.distress as number), 0) /
-              dayCheckIns.length) *
-              10
-          ) / 10
-        : null;
+    const dayCheckIns = checkIns.filter((c) => c.log_date === key);
 
     out.push({
       date: key,
       label: d.toLocaleDateString(undefined, { weekday: "short" }),
-      distress,
+      state: dominantState(dayCheckIns),
       practices: sessions.filter((s) => s.started_at.slice(0, 10) === key).length,
     });
   }
@@ -140,7 +141,7 @@ export type Observation = {
 };
 
 /**
- * Compares mean distress on days a factor was high vs low.
+ * Compares dominant-state severity on days a factor was high vs low.
  * Descriptive only — deliberately worded to avoid implying causation.
  */
 export function factorObservations(
@@ -149,19 +150,20 @@ export function factorObservations(
 ): Observation[] {
   const observations: Observation[] = [];
 
-  // Mean distress per day.
-  const distressByDay = new Map<string, number[]>();
+  // Dominant state per day, converted to an internal severity number purely
+  // so we can compare "high factor days" vs "low factor days" — never shown
+  // to the user as a number.
+  const byDay = new Map<string, CheckInRow[]>();
   for (const c of checkIns) {
-    if (c.distress === null) continue;
-    const key = c.created_at.slice(0, 10);
-    const list = distressByDay.get(key) ?? [];
-    list.push(c.distress);
-    distressByDay.set(key, list);
+    const list = byDay.get(c.log_date) ?? [];
+    list.push(c);
+    byDay.set(c.log_date, list);
   }
   const dayMean = (key: string) => {
-    const list = distressByDay.get(key);
-    if (!list?.length) return null;
-    return list.reduce((a, b) => a + b, 0) / list.length;
+    const rows = byDay.get(key);
+    if (!rows?.length) return null;
+    const state = dominantState(rows);
+    return state ? SEVERITY[state] : null;
   };
 
   const byFactor = new Map<string, FactorRow[]>();
@@ -178,10 +180,10 @@ export function factorObservations(
 
     // Only use days where we have both a factor value and a check-in.
     const paired = rows
-      .map((r) => ({ value: r.value as number, distress: dayMean(r.log_date) }))
-      .filter((p) => p.distress !== null) as {
+      .map((r) => ({ value: r.value as number, severity: dayMean(r.log_date) }))
+      .filter((p) => p.severity !== null) as {
       value: number;
-      distress: number;
+      severity: number;
     }[];
 
     if (paired.length < MIN_SAMPLE) continue;
@@ -194,12 +196,14 @@ export function factorObservations(
     const low = paired.filter((p) => p.value < median);
     if (high.length < 2 || low.length < 2) continue;
 
+    // Severity runs low-to-high as rough→good, so "high factor days felt
+    // easier" means their mean severity is the bigger of the two.
     const meanOf = (arr: typeof paired) =>
-      arr.reduce((a, p) => a + p.distress, 0) / arr.length;
-    const diff = meanOf(low) - meanOf(high);
+      arr.reduce((a, p) => a + p.severity, 0) / arr.length;
+    const diff = meanOf(high) - meanOf(low);
 
     // Ignore differences too small to mean anything.
-    if (Math.abs(diff) < 1) continue;
+    if (Math.abs(diff) < 0.5) continue;
 
     const easier = diff > 0;
     const direction = factor.higherIsBetter === false ? !easier : easier;

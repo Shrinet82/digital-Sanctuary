@@ -1,6 +1,6 @@
 "use client";
 
-import { intensityLabel } from "@/lib/recommend";
+import { intensityLabel } from "@/lib/scale";
 
 export function Slider({
   id,

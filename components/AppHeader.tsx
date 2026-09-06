@@ -17,6 +17,12 @@ export function AppHeader({ showSignOut = true }: { showSignOut?: boolean }) {
       </Link>
       <div className="flex-1" />
       <Link
+        href="/ledger"
+        className="text-sm font-bold text-ink-soft no-underline hover:underline underline-offset-2"
+      >
+        Ledger
+      </Link>
+      <Link
         href="/insights"
         className="text-sm font-bold text-ink-soft no-underline hover:underline underline-offset-2"
       >

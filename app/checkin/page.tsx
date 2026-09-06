@@ -16,7 +16,7 @@ export default function CheckInPage() {
           pressure.
         </h1>
         <p className="text-ink-soft text-lg mt-4 max-w-[56ch]">
-          15 seconds, fully optional. Slide what feels true, skip what
+          15 seconds, fully optional. Tap what feels true, skip what
           doesn&apos;t.
         </p>
         <div className="mt-7">
