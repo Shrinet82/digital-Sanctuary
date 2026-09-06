@@ -142,6 +142,41 @@ export const MODULES: Record<ModuleId, Suggestion> = {
       "Park a worry to a set time you choose, with something small to refocus on meanwhile.",
     condition: "Racing thoughts",
   },
+  "body-settle": {
+    moduleId: "body-settle",
+    title: "Body Settle",
+    description:
+      "Progressive muscle release — tense one group at a time, then let it all go.",
+    condition: "Anxiety",
+  },
+  "cool-the-storm": {
+    moduleId: "cool-the-storm",
+    title: "Cool the Storm",
+    description:
+      "Paced breathing, slow movement, and a long release — no physical shock, ever.",
+    condition: "Anxiety",
+  },
+  "focus-setup": {
+    moduleId: "focus-setup",
+    title: "Focus Setup",
+    description:
+      "An environment checklist before you start — friction removed before it's needed.",
+    condition: "ADHD",
+  },
+  "gentle-rhythm": {
+    moduleId: "gentle-rhythm",
+    title: "Gentle Rhythm",
+    description:
+      "Rebuild routine without a rigid schedule — pick anchors for today, no times attached.",
+    condition: "Low mood",
+  },
+  "problem-ladder": {
+    moduleId: "problem-ladder",
+    title: "Problem Ladder",
+    description:
+      "Vague dread, narrowed down: the whole thing → one piece → one doable move.",
+    condition: "Racing thoughts",
+  },
 };
 
 /**
@@ -161,6 +196,9 @@ const SURPRISE_POOL: ModuleId[] = [
   "grounding-54321",
   "card-deck",
   "before-after",
+  "body-settle",
+  "gentle-rhythm",
+  "problem-ladder",
 ];
 
 function pick(ids: ModuleId[]): Suggestion[] {

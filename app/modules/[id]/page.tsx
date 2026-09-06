@@ -24,6 +24,11 @@ import { FiveSenses } from "@/components/modules/FiveSenses";
 import { BeforeAfter } from "@/components/modules/BeforeAfter";
 import { WorrySorter } from "@/components/modules/WorrySorter";
 import { WorryWindow } from "@/components/modules/WorryWindow";
+import { BodySettle } from "@/components/modules/BodySettle";
+import { CoolTheStorm } from "@/components/modules/CoolTheStorm";
+import { FocusSetup } from "@/components/modules/FocusSetup";
+import { GentleRhythm } from "@/components/modules/GentleRhythm";
+import { ProblemLadder } from "@/components/modules/ProblemLadder";
 
 const GROUP_STYLE: Record<string, string> = {
   anxiety: "bg-coral-soft text-[#B03A2E]",
@@ -131,6 +136,11 @@ export default async function ModulePage({
               {meta.id === "before-after" && <BeforeAfter />}
               {meta.id === "worry-sorter" && <WorrySorter />}
               {meta.id === "worry-window" && <WorryWindow />}
+              {meta.id === "body-settle" && <BodySettle />}
+              {meta.id === "cool-the-storm" && <CoolTheStorm />}
+              {meta.id === "focus-setup" && <FocusSetup />}
+              {meta.id === "gentle-rhythm" && <GentleRhythm />}
+              {meta.id === "problem-ladder" && <ProblemLadder />}
             </>
           )}
         </div>

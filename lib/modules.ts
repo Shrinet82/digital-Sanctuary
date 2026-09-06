@@ -35,6 +35,26 @@ export const MODULE_LIST: ModuleMeta[] = [
     why: "Slow, paced breathing with a longer exhale gently signals the body's calming system. It's a portable skill for high-arousal moments — not a cure, and you're in control the whole time. Adapted from paced-breathing and grounding practices in NHS and CCI anxiety self-help materials.",
   },
   {
+    id: "body-settle",
+    title: "Body Settle",
+    emoji: "🧘",
+    group: "anxiety",
+    condition: "Anxiety",
+    description:
+      "Progressive muscle release — tense one group at a time, then let it all go.",
+    why: "Deliberately tensing and releasing muscle groups gives the body a concrete signal to downshift, and it's something to *do* rather than just think your way calm. Standard behavioural relaxation training component. Evidence grade B.",
+  },
+  {
+    id: "cool-the-storm",
+    title: "Cool the Storm",
+    emoji: "🌪️",
+    group: "anxiety",
+    condition: "Anxiety",
+    description:
+      "Paced breathing, slow movement, and a long release — no physical shock, ever.",
+    why: "Combines paced breathing with slow movement, both DBT-derived distress-tolerance components. Deliberately excludes any cold/physical-shock techniques that circulate in this space — those are substitution, not regulation. Evidence grade B.",
+  },
+  {
     id: "ride-the-wave",
     title: "Ride the Wave",
     emoji: "🌊",
@@ -73,6 +93,16 @@ export const MODULE_LIST: ModuleMeta[] = [
     description:
       "Park a worry to a set time you choose, with something small to refocus on meanwhile.",
     why: "Stimulus-control worry postponement (Borkovec) — deciding when you'll think about something reduces how much it intrudes right now, without pretending it isn't there. Evidence grade B. Note: there's no reminder system yet, so this only works if you check back yourself.",
+  },
+  {
+    id: "problem-ladder",
+    title: "Problem Ladder",
+    emoji: "🪜",
+    group: "anxiety",
+    condition: "Racing thoughts",
+    description:
+      "Vague dread, narrowed down: the whole thing → one piece → one doable move.",
+    why: "Vague dread is paralysing partly because it's vague — naming the whole thing, then one piece of it, then one move on that piece, converts an unmanageable feeling into a concrete next action. Same family as CBT problem-solving, evidence grade B.",
   },
   {
     id: "card-deck",
@@ -117,6 +147,16 @@ export const MODULE_LIST: ModuleMeta[] = [
     why: "Behavioural activation's core claim — action before motivation — made visible in your own before/after numbers rather than just asserted. Evidence grade A.",
   },
   {
+    id: "gentle-rhythm",
+    title: "Gentle Rhythm",
+    emoji: "🌤️",
+    group: "low_mood",
+    condition: "Low mood",
+    description:
+      "Rebuild routine without a rigid schedule — pick anchors for today, no times attached.",
+    why: "Depression erodes routine, but a rigid timetable just adds a new way to feel like you failed. Anchoring on a few loose, unscheduled touchpoints rebuilds rhythm without the all-or-nothing trap. Behavioural-activation adjacent, evidence grade B.",
+  },
+  {
     id: "energy-aware-week",
     title: "Energy-Aware Week",
     emoji: "🗓️",
@@ -128,6 +168,16 @@ export const MODULE_LIST: ModuleMeta[] = [
   },
 
   /* ---------------- adhd ---------------- */
+  {
+    id: "focus-setup",
+    title: "Focus Setup",
+    emoji: "🧹",
+    group: "adhd",
+    condition: "ADHD",
+    description:
+      "An environment checklist before you start — friction removed before it's needed.",
+    why: "Executive-function friction often comes from the environment, not willpower — clearing it in advance costs less than fighting distraction mid-task. Same Focus Forward tradition as the rest of this lane.",
+  },
   {
     id: "whats-blocking-me",
     title: "What's Blocking Me?",
