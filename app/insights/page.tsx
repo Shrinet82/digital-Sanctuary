@@ -17,6 +17,7 @@ import {
   type FactorRow,
   type SessionRow,
 } from "@/lib/insights";
+import { firstReflection, weekReflection } from "@/lib/patterns";
 
 export const metadata = { title: "Your patterns · Digital Sanctuary" };
 
@@ -40,7 +41,7 @@ export default async function InsightsPage() {
         .maybeSingle(),
       supabase
         .from("check_ins")
-        .select("log_date, state, created_at")
+        .select("log_date, state, context, created_at")
         .gte("created_at", sinceIso)
         .order("created_at"),
       supabase
@@ -70,6 +71,8 @@ export default async function InsightsPage() {
   const bars = weeklyShape(checkInRows, sessionRows);
   const helps = whatHelpsMost(sessionRows);
   const observations = factorObservations(checkInRows, factorRows);
+  const reflection =
+    weekReflection(checkInRows, sessionRows.length) ?? firstReflection(checkInRows);
 
   const today = new Date().toISOString().slice(0, 10);
   const todayValues: Record<string, number> = {};
@@ -98,6 +101,15 @@ export default async function InsightsPage() {
           to mean something.
         </p>
       </section>
+
+      {reflection && (
+        <section className="pb-8">
+          <div className="ds-card bg-gradient-to-br from-violet-soft via-white to-mint">
+            <span className="ds-pill bg-white mb-3">🔮 your first reflection</span>
+            <p className="text-lg font-display font-bold m-0">{reflection}</p>
+          </div>
+        </section>
+      )}
 
       {/* Today's logging */}
       <section className="pb-8">

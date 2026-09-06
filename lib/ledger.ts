@@ -30,9 +30,13 @@ export function groupByDate<T extends { log_date: string }>(
 /**
  * The most frequent state among a day's check-ins. Ties are broken by
  * whichever tied state was checked in most recently — "how the day ended
- * up," not an arbitrary pick.
+ * up," not an arbitrary pick. `created_at` is optional: callers that only
+ * have log_date + state (e.g. lib/patterns.ts) still get a deterministic,
+ * stable result — just without the recency tie-break.
  */
-export function dominantState(dayRows: CheckInLite[]): CheckInState | null {
+export function dominantState<
+  T extends { state: CheckInState; created_at?: string },
+>(dayRows: T[]): CheckInState | null {
   if (dayRows.length === 0) return null;
   if (dayRows.length === 1) return dayRows[0].state;
 
@@ -52,7 +56,7 @@ export function dominantState(dayRows: CheckInLite[]): CheckInState | null {
   if (tied.length === 1) return tied[0];
 
   const byRecency = [...dayRows].sort((a, b) =>
-    b.created_at.localeCompare(a.created_at)
+    (b.created_at ?? "").localeCompare(a.created_at ?? "")
   );
   return byRecency.find((r) => tied.includes(r.state))?.state ?? tied[0];
 }

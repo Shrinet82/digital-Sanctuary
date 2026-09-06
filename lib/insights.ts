@@ -25,6 +25,7 @@ export type SessionRow = {
 export type CheckInRow = {
   log_date: string;
   state: CheckInState;
+  context: string[];
   created_at: string;
 };
 

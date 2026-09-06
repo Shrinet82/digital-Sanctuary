@@ -9,6 +9,7 @@ import { ModuleGrid } from "@/components/ModuleGrid";
 import { getAllWorksheets } from "@/lib/worksheets/registry";
 import { WeekStrip } from "@/components/ledger/WeekStrip";
 import { buildRecentStrip, type CheckInLite } from "@/lib/ledger";
+import { firstReflection, weekReflection } from "@/lib/patterns";
 
 export const metadata = { title: "Your dashboard · Digital Sanctuary" };
 
@@ -39,8 +40,13 @@ export default async function DashboardPage() {
   const since7 = new Date();
   since7.setDate(since7.getDate() - 6);
 
-  const [{ data: profile }, { data: latestCheckIn }, { data: sessions }, { data: weekCheckIns }] =
-    await Promise.all([
+  const [
+    { data: profile },
+    { data: latestCheckIn },
+    { data: sessions },
+    { data: weekCheckIns },
+    { data: reflectionCheckIns },
+  ] = await Promise.all([
       supabase
         .from("profiles")
         .select("display_name")
@@ -62,10 +68,20 @@ export default async function DashboardPage() {
         .select("log_date, state, created_at")
         .gte("log_date", since7.toISOString().slice(0, 10))
         .order("created_at", { ascending: true }),
+      supabase
+        .from("check_ins")
+        .select("log_date, state, context")
+        .order("log_date", { ascending: true }),
     ]);
 
   const name = profile?.display_name?.trim() || null;
   const worksheets = getAllWorksheets();
+  const reflectionRows = (reflectionCheckIns ?? []) as {
+    log_date: string;
+    state: CheckInState;
+    context: string[];
+  }[];
+  const reflection = weekReflection(reflectionRows, 0) ?? firstReflection(reflectionRows);
 
   const hasCheckIn = Boolean(latestCheckIn);
 
@@ -237,6 +253,14 @@ export default async function DashboardPage() {
             See your patterns →
           </Link>
         </div>
+        {reflection && (
+          <Link
+            href="/insights"
+            className="ds-card !p-4 block no-underline text-ink bg-gradient-to-br from-violet-soft via-white to-mint mb-4 hover:-translate-y-0.5 transition-transform"
+          >
+            <span className="text-sm font-bold">{reflection}</span>
+          </Link>
+        )}
         <div className="ds-card">
           <b className="block mb-1">Recent practice</b>
           {history.length === 0 ? (
