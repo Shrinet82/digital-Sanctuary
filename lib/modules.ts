@@ -253,6 +253,17 @@ export const MODULE_LIST: ModuleMeta[] = [
     why: "Recovery-support work tracks protective behaviours rather than use. Seeing which anchors are already in your life — sleep, meals, movement, contact, appointments — is more useful than any streak. Counts are days present, never a score, and a thin week is not a failed week. From the ATTC TRUST Mooring Lines chart.",
   },
   {
+    id: "context-log",
+    title: "Context Log",
+    emoji: "📝",
+    group: "substance",
+    condition: "Substance use",
+    vault: true,
+    description:
+      "Optional private notes on setting, mood, and who was around. Never what, how much, or where from.",
+    why: "Context — where you were, how you felt, who was present — is what makes a pattern visible over time. This deliberately has no field for substance, amount, or source: that's not what this log is for, and never will be.",
+  },
+  {
     id: "lapse-review",
     title: "Lapse Learning Review",
     emoji: "🔎",

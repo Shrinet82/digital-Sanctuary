@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
 import { MODULE_LIST, getModule } from "@/lib/modules";
-import { getAnchors, getVaultConsent } from "@/app/actions/vault";
+import { getAnchors, getRecentContextLog, getVaultConsent } from "@/app/actions/vault";
 
 import { GroundAndSettle } from "@/components/modules/GroundAndSettle";
 import { TaskDecomposer } from "@/components/modules/TaskDecomposer";
@@ -29,6 +29,7 @@ import { CoolTheStorm } from "@/components/modules/CoolTheStorm";
 import { FocusSetup } from "@/components/modules/FocusSetup";
 import { GentleRhythm } from "@/components/modules/GentleRhythm";
 import { ProblemLadder } from "@/components/modules/ProblemLadder";
+import { ContextLog } from "@/components/modules/ContextLog";
 
 const GROUP_STYLE: Record<string, string> = {
   anxiety: "bg-coral-soft text-[#B03A2E]",
@@ -80,6 +81,11 @@ export default async function ModulePage({
     anchors = await getAnchors();
   }
 
+  let contextLog: Awaited<ReturnType<typeof getRecentContextLog>> = [];
+  if (meta.id === "context-log" && consented) {
+    contextLog = await getRecentContextLog();
+  }
+
   return (
     <main className="max-w-2xl mx-auto px-6">
       <AppHeader />
@@ -129,6 +135,7 @@ export default async function ModulePage({
               {meta.id === "trigger-map" && <TriggerMap />}
               {meta.id === "mooring-lines" && <MooringLines initial={anchors} />}
               {meta.id === "lapse-review" && <LapseReview />}
+              {meta.id === "context-log" && <ContextLog initial={contextLog} />}
               {meta.id === "ride-the-wave" && <RideTheWave />}
               {meta.id === "card-deck" && <CardDeck />}
               {meta.id === "whats-blocking-me" && <WhatsBlockingMe />}

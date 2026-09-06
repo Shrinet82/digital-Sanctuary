@@ -163,6 +163,58 @@ export async function getAnchors(): Promise<Record<string, number>> {
 /* Lapse review                                                  */
 /* ------------------------------------------------------------ */
 
+/* ------------------------------------------------------------ */
+/* Context log — never procurement details                      */
+/* ------------------------------------------------------------ */
+
+export type ContextLogEntry = {
+  setting: string | null;
+  mood: string | null;
+  peoplePresent: string | null;
+  note: string | null;
+  created_at: string;
+};
+
+export async function saveContextLogEntry(input: {
+  setting: string | null;
+  mood: string | null;
+  peoplePresent: string | null;
+  note: string | null;
+}): Promise<ActionResult> {
+  const { supabase, user } = await currentUser();
+  if (!user) return { ok: false, error: "Please sign in first." };
+
+  const { error } = await supabase.from("su_context_log").insert({
+    user_id: user.id,
+    setting: input.setting,
+    mood: input.mood,
+    people_present: input.peoplePresent,
+    note: input.note,
+  });
+
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+export async function getRecentContextLog(): Promise<ContextLogEntry[]> {
+  const { supabase, user } = await currentUser();
+  if (!user) return [];
+
+  const { data } = await supabase
+    .from("su_context_log")
+    .select("setting, mood, people_present, note, created_at")
+    .order("created_at", { ascending: false })
+    .limit(10);
+
+  return (data ?? []).map((r) => ({
+    setting: r.setting,
+    mood: r.mood,
+    peoplePresent: r.people_present,
+    note: r.note,
+    created_at: r.created_at,
+  }));
+}
+
 export async function saveLapseReview(input: {
   context: string | null;
   warningSigns: string[];
