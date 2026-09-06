@@ -14,7 +14,18 @@ async function requireUser() {
   return { supabase, user };
 }
 
-export type DailyJournalAnswers = { word?: string; sentence?: string };
+export type GuidedFields = {
+  whatHappened: string;
+  bodyFelt: string;
+  friendAdvice: string;
+};
+
+export type DailyJournalAnswers = {
+  word?: string;
+  sentence?: string;
+  guided?: GuidedFields;
+  freePage?: string;
+};
 
 /** The Ledger day view's one journal entry for that day (rungs 2-3), if any. */
 export async function getDailyJournal(

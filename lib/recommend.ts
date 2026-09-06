@@ -121,6 +121,27 @@ export const MODULES: Record<ModuleId, Suggestion> = {
       "A guided sensory countdown — five things you see, down to one thing you taste.",
     condition: "Anxiety",
   },
+  "before-after": {
+    moduleId: "before-after",
+    title: "Before / After",
+    description:
+      "Rate your mood, do one small thing, rate it again — watch doing lift mood.",
+    condition: "Low mood",
+  },
+  "worry-sorter": {
+    moduleId: "worry-sorter",
+    title: "Worry Sorter",
+    description:
+      "You classify the worry — actionable, uncertain, or needs real help — and get routed accordingly.",
+    condition: "Racing thoughts",
+  },
+  "worry-window": {
+    moduleId: "worry-window",
+    title: "Worry Window",
+    description:
+      "Park a worry to a set time you choose, with something small to refocus on meanwhile.",
+    condition: "Racing thoughts",
+  },
 };
 
 /**
@@ -139,6 +160,7 @@ const SURPRISE_POOL: ModuleId[] = [
   "energy-aware-week",
   "grounding-54321",
   "card-deck",
+  "before-after",
 ];
 
 function pick(ids: ModuleId[]): Suggestion[] {

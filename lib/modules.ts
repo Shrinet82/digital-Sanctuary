@@ -55,6 +55,26 @@ export const MODULE_LIST: ModuleMeta[] = [
     why: "Widely practised sensory grounding. The formal evidence for it is thin (evidence grade C), but it's ubiquitous, has no red flags, and needs no equipment or writing — so it ships as a normal toolkit item, no hedging needed.",
   },
   {
+    id: "worry-sorter",
+    title: "Worry Sorter",
+    emoji: "🗂️",
+    group: "anxiety",
+    condition: "Racing thoughts",
+    description:
+      "You classify the worry — actionable, uncertain, or needs real help — and get routed accordingly.",
+    why: "Worry classification is a core move in GAD protocols: most worry-time goes to things that either have an obvious next action or genuinely can't be resolved by more thinking. You decide which is which; the app only routes on your answer. Evidence grade B.",
+  },
+  {
+    id: "worry-window",
+    title: "Worry Window",
+    emoji: "🪟",
+    group: "anxiety",
+    condition: "Racing thoughts",
+    description:
+      "Park a worry to a set time you choose, with something small to refocus on meanwhile.",
+    why: "Stimulus-control worry postponement (Borkovec) — deciding when you'll think about something reduces how much it intrudes right now, without pretending it isn't there. Evidence grade B. Note: there's no reminder system yet, so this only works if you check back yourself.",
+  },
+  {
     id: "card-deck",
     title: "Card Deck",
     emoji: "🃏",
@@ -85,6 +105,16 @@ export const MODULE_LIST: ModuleMeta[] = [
     description:
       "Not what you should do — what matters to you. Then one tiny, voluntary step toward it.",
     why: "When mood is low, motivation is a trap but values still point somewhere. Turning something you care about into a two-minute act is the acting-on-your-values move from WHO's Doing What Matters in Times of Stress. The step stays small and voluntary on purpose.",
+  },
+  {
+    id: "before-after",
+    title: "Before / After",
+    emoji: "📈",
+    group: "low_mood",
+    condition: "Low mood",
+    description:
+      "Rate your mood, do one small thing, rate it again — watch doing lift mood, in your own numbers.",
+    why: "Behavioural activation's core claim — action before motivation — made visible in your own before/after numbers rather than just asserted. Evidence grade A.",
   },
   {
     id: "energy-aware-week",

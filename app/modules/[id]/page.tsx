@@ -21,6 +21,9 @@ import { RideTheWave } from "@/components/modules/RideTheWave";
 import { CardDeck } from "@/components/modules/CardDeck";
 import { WhatsBlockingMe } from "@/components/modules/WhatsBlockingMe";
 import { FiveSenses } from "@/components/modules/FiveSenses";
+import { BeforeAfter } from "@/components/modules/BeforeAfter";
+import { WorrySorter } from "@/components/modules/WorrySorter";
+import { WorryWindow } from "@/components/modules/WorryWindow";
 
 const GROUP_STYLE: Record<string, string> = {
   anxiety: "bg-coral-soft text-[#B03A2E]",
@@ -125,6 +128,9 @@ export default async function ModulePage({
               {meta.id === "card-deck" && <CardDeck />}
               {meta.id === "whats-blocking-me" && <WhatsBlockingMe />}
               {meta.id === "grounding-54321" && <FiveSenses />}
+              {meta.id === "before-after" && <BeforeAfter />}
+              {meta.id === "worry-sorter" && <WorrySorter />}
+              {meta.id === "worry-window" && <WorryWindow />}
             </>
           )}
         </div>
