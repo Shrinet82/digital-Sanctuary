@@ -4,11 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import type { SafetyNetData } from "@/app/actions/safetynet";
 import type { Resource } from "@/components/modules/SafetyGateway";
-
-/** Some contact strings list alternatives ("14416 or 1-800-..."); tel: needs just one. */
-function firstPhone(contact: string): string {
-  return contact.split(/\s+or\s+/i)[0].replace(/[^\d+]/g, "");
-}
+import { firstPhone } from "@/lib/phone";
 
 /**
  * The urgent-support dialog. Shared by the header button and by any
