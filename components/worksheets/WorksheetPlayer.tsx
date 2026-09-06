@@ -468,14 +468,6 @@ function StepView({
                 ))}
             </ul>
           </div>
-
-          {s.aiRecap && (
-            <p className="text-xs text-ink-faint mt-4">
-              ✨ An optional plain-language recap of your own words is coming in
-              a later phase — and you&apos;ll always approve it before anything
-              saves.
-            </p>
-          )}
         </div>
       );
     }

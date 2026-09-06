@@ -91,8 +91,6 @@ export type SummaryStep = BaseStep & {
   type: "summary";
   /** Two scale keys to compare, e.g. ["belief_before", "belief_after"]. */
   compare?: [string, string];
-  /** Offer an optional, user-approved plain-language recap. Phase 6. */
-  aiRecap?: boolean;
 };
 
 export type Step =

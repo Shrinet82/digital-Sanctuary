@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { saveJournalEntry, savePracticeSession } from "@/app/actions/practice";
-import { AiSuggestion } from "@/components/ai/AiSuggestion";
 
 const BLOCKERS = [
   "Getting started",
@@ -17,9 +16,8 @@ const BLOCKERS = [
 type Step = { text: string; hint: string; twoMinute?: boolean };
 
 /**
- * DETERMINISTIC step skeleton. Phase 6 may optionally reword step *text*
- * via the narrow AI allowlist — the structure below never comes from a model,
- * and the first step is always observable and under two minutes.
+ * DETERMINISTIC step skeleton — authored verb-template, never a model.
+ * The first step is always observable and under two minutes.
  */
 function buildSteps(goal: string): Step[] {
   const g = goal.trim() || "the task";
@@ -107,13 +105,6 @@ export function TaskDecomposer() {
         onChange={(e) => setGoal(e.target.value)}
         placeholder="e.g. submit the reimbursement form"
         className="w-full border-2.5 border-ink rounded-[14px] px-4 py-3 bg-surface"
-      />
-
-      <AiSuggestion
-        task="reword_task"
-        text={goal}
-        label="✨ Shrink this for me"
-        onAccept={(v) => setGoal(v)}
       />
 
       <div className="flex gap-3 flex-wrap items-center mt-5">

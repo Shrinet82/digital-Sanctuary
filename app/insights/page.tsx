@@ -4,7 +4,6 @@ import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
 import { FactorLogger } from "@/components/tracking/FactorLogger";
 import { DataControls } from "@/components/tracking/DataControls";
-import { AiSettings } from "@/components/ai/AiSettings";
 import { MODULES } from "@/lib/recommend";
 import { getAllWorksheets } from "@/lib/worksheets/registry";
 import {
@@ -35,7 +34,7 @@ export default async function InsightsPage() {
     await Promise.all([
       supabase
         .from("profiles")
-        .select("tracked_factors, ai_enabled")
+        .select("tracked_factors")
         .eq("id", user.id)
         .maybeSingle(),
       supabase
@@ -253,15 +252,6 @@ export default async function InsightsPage() {
             isn&apos;t shown at all.
           </div>
         </div>
-      </section>
-
-      {/* AI settings */}
-      <section className="pb-8">
-        <div className="flex items-center gap-3 mb-3 flex-wrap">
-          <h2 className="text-xl">✨ AI, on your terms</h2>
-          <span className="ds-pill bg-sand rotate-1">off by default</span>
-        </div>
-        <AiSettings enabled={profile?.ai_enabled ?? false} />
       </section>
 
       {/* Data controls */}

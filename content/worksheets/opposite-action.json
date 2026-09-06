@@ -75,8 +75,7 @@
     },
     {
       "type": "summary",
-      "compare": ["intensity_before", "intensity_after"],
-      "aiRecap": true
+      "compare": ["intensity_before", "intensity_after"]
     }
   ]
 }
