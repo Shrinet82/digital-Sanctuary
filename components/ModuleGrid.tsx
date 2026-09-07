@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import {
   GROUP_LABELS,
@@ -44,46 +47,36 @@ function ModuleCard({ m }: { m: ModuleMeta }) {
 /**
  * The Today grid, with lanes from §10 — state-based, not diagnosis-based.
  *
- * Always renders every lane as its own headed section — no flat,
- * undifferentiated "all" view, and no filter that hides the rest. A flat
- * ~20-card scroll (or a filter that disappears everything else) is exactly
- * the cognitive load the check-in flow was built to avoid. The pills are
- * jump-links to a section, nothing more — no active/selected state to
- * track, since there's nothing to filter.
+ * Tab behaviour, no "All": one lane showing at a time, "Right now" active
+ * by default, and tapping a pill switches which lane is shown. There's no
+ * flat everything-at-once view to fall back to — every lane is reachable
+ * by tapping its pill.
  */
 export function ModuleGrid() {
+  const [group, setGroup] = useState<ConditionGroup>("right_now");
+  const shown = MODULE_LIST.filter((m) => m.group === group);
+
   return (
     <>
       <div className="flex gap-2.5 flex-wrap mb-4">
         {GROUP_LABELS.map((g) => (
-          <a
+          <button
             key={g.value}
-            href={`#lane-${g.value}`}
-            className="border-2 border-ink rounded-full px-4 py-2 text-[13.5px] font-bold shadow-pop-sm bg-surface no-underline text-ink transition-transform hover:-translate-y-px inline-block"
+            onClick={() => setGroup(g.value)}
+            aria-pressed={group === g.value}
+            className={`border-2 border-ink rounded-full px-4 py-2 text-[13.5px] font-bold shadow-pop-sm transition-transform hover:-translate-y-px ${
+              group === g.value ? "bg-violet text-white" : "bg-surface"
+            }`}
           >
             {g.emoji} {g.label}
-          </a>
+          </button>
         ))}
       </div>
 
-      <div className="space-y-7">
-        {GROUP_LABELS.map((lane) => {
-          const modules = MODULE_LIST.filter((m) => m.group === lane.value);
-          if (modules.length === 0) return null;
-          return (
-            <div key={lane.value} id={`lane-${lane.value}`}>
-              <h3 className="flex items-center gap-2 text-base font-extrabold mb-3">
-                <span aria-hidden>{lane.emoji}</span>
-                {lane.label}
-              </h3>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {modules.map((m) => (
-                  <ModuleCard key={m.id} m={m} />
-                ))}
-              </div>
-            </div>
-          );
-        })}
+      <div className="grid gap-4 sm:grid-cols-2">
+        {shown.map((m) => (
+          <ModuleCard key={m.id} m={m} />
+        ))}
       </div>
     </>
   );
