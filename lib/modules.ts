@@ -272,13 +272,15 @@ export function getModule(id: string): ModuleMeta | undefined {
 }
 
 /**
- * State-based lanes (§10) — the pills, the "All" view's section headers,
- * and every module/recommendation subtitle in the app all read from this
- * one list, so there's nowhere else for a diagnosis label to sneak back in.
+ * State-based lanes (§10) — the section headers/jump-links and every
+ * module/recommendation subtitle in the app all read from this one list,
+ * so there's nowhere else for a diagnosis label to sneak back in.
+ *
+ * No "all" entry: the Toolkit always shows every lane, each in its own
+ * section — there's no flat, undifferentiated view to opt into or out of.
  */
-export const GROUP_LABELS: { value: ConditionGroup | "all"; label: string; emoji: string }[] =
+export const GROUP_LABELS: { value: ConditionGroup; label: string; emoji: string }[] =
   [
-    { value: "all", label: "All", emoji: "✨" },
     { value: "right_now", label: "Right now", emoji: "🌊" },
     { value: "racing_thoughts", label: "Racing thoughts", emoji: "🌀" },
     { value: "low_mood", label: "Low mood", emoji: "🌻" },

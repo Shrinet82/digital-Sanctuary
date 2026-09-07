@@ -2,12 +2,12 @@ import { describe, expect, it } from "vitest";
 import { GROUP_LABELS, MODULE_LIST, groupLabel } from "./modules";
 
 describe("module lanes (§10 — state-based, not diagnosis-based)", () => {
-  it("has no diagnosis-named lane — only the state-based ones, plus substance use", () => {
+  it("has no diagnosis-named lane, and no 'all' entry — every lane is always shown", () => {
     const labels = GROUP_LABELS.map((g) => g.label);
     expect(labels).not.toContain("Anxiety");
     expect(labels).not.toContain("ADHD");
+    expect(labels).not.toContain("All");
     expect(labels).toEqual([
-      "All",
       "Right now",
       "Racing thoughts",
       "Low mood",

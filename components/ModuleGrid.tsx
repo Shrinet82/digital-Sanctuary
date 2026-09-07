@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 import {
   GROUP_LABELS,
@@ -47,63 +44,47 @@ function ModuleCard({ m }: { m: ModuleMeta }) {
 /**
  * The Today grid, with lanes from §10 — state-based, not diagnosis-based.
  *
- * "All" renders five labelled sections rather than one flat ~20-card
- * scroll: a flat grid is exactly the cognitive load the check-in flow was
- * built to avoid. A single selected lane still renders as a flat grid —
- * the pill itself is the label at that point, so a repeated header would
- * just be noise.
+ * Always renders every lane as its own headed section — no flat,
+ * undifferentiated "all" view, and no filter that hides the rest. A flat
+ * ~20-card scroll (or a filter that disappears everything else) is exactly
+ * the cognitive load the check-in flow was built to avoid. The pills are
+ * jump-links to a section, nothing more — no active/selected state to
+ * track, since there's nothing to filter.
  */
 export function ModuleGrid() {
-  const [group, setGroup] = useState<ConditionGroup | "all">("all");
-  const lanes = GROUP_LABELS.filter(
-    (g): g is { value: ConditionGroup; label: string; emoji: string } =>
-      g.value !== "all"
-  );
-
   return (
     <>
       <div className="flex gap-2.5 flex-wrap mb-4">
         {GROUP_LABELS.map((g) => (
-          <button
+          <a
             key={g.value}
-            onClick={() => setGroup(g.value)}
-            aria-pressed={group === g.value}
-            className={`border-2 border-ink rounded-full px-4 py-2 text-[13.5px] font-bold shadow-pop-sm transition-transform hover:-translate-y-px ${
-              group === g.value ? "bg-violet text-white" : "bg-surface"
-            }`}
+            href={`#lane-${g.value}`}
+            className="border-2 border-ink rounded-full px-4 py-2 text-[13.5px] font-bold shadow-pop-sm bg-surface no-underline text-ink transition-transform hover:-translate-y-px inline-block"
           >
             {g.emoji} {g.label}
-          </button>
+          </a>
         ))}
       </div>
 
-      {group === "all" ? (
-        <div className="space-y-7">
-          {lanes.map((lane) => {
-            const modules = MODULE_LIST.filter((m) => m.group === lane.value);
-            if (modules.length === 0) return null;
-            return (
-              <div key={lane.value}>
-                <h3 className="flex items-center gap-2 text-base font-extrabold mb-3">
-                  <span aria-hidden>{lane.emoji}</span>
-                  {lane.label}
-                </h3>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {modules.map((m) => (
-                    <ModuleCard key={m.id} m={m} />
-                  ))}
-                </div>
+      <div className="space-y-7">
+        {GROUP_LABELS.map((lane) => {
+          const modules = MODULE_LIST.filter((m) => m.group === lane.value);
+          if (modules.length === 0) return null;
+          return (
+            <div key={lane.value} id={`lane-${lane.value}`}>
+              <h3 className="flex items-center gap-2 text-base font-extrabold mb-3">
+                <span aria-hidden>{lane.emoji}</span>
+                {lane.label}
+              </h3>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {modules.map((m) => (
+                  <ModuleCard key={m.id} m={m} />
+                ))}
               </div>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2">
-          {MODULE_LIST.filter((m) => m.group === group).map((m) => (
-            <ModuleCard key={m.id} m={m} />
-          ))}
-        </div>
-      )}
+            </div>
+          );
+        })}
+      </div>
     </>
   );
 }
