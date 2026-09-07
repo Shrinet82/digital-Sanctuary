@@ -20,7 +20,6 @@ export type Suggestion = {
   moduleId: ModuleId;
   title: string;
   description: string;
-  condition: string;
 };
 
 export type Recommendation = Suggestion & {
@@ -35,147 +34,126 @@ export const MODULES: Record<ModuleId, Suggestion> = {
     title: "Ground & Settle",
     description:
       "A short paced-breathing practice. Follow the circle; leave whenever you like.",
-    condition: "Anxiety",
   },
   "task-decomposer": {
     moduleId: "task-decomposer",
     title: "Task Decomposer",
     description:
       "Turn one goal into small, observable steps — starting with one under two minutes.",
-    condition: "ADHD",
   },
   "one-small-action": {
     moduleId: "one-small-action",
     title: "One Small Action",
     description:
       "One achievable, kind, or connecting action — sized for today, whatever today looks like.",
-    condition: "Low mood",
   },
   "safety-gateway": {
     moduleId: "safety-gateway",
     title: "Safety Gateway",
     description:
       "A calm, always-available route to real help — emergency, overdose, withdrawal, and local services.",
-    condition: "Substance use",
   },
   "trigger-map": {
     moduleId: "trigger-map",
     title: "Trigger & Support Map",
     description:
       "Map what tends to come before an urge, pre-choose an alternative, and name who you'd contact.",
-    condition: "Substance use",
   },
   "values-to-action": {
     moduleId: "values-to-action",
     title: "Values to Action",
     description:
       "Not what you should do — what matters to you. Then one tiny, voluntary step toward it.",
-    condition: "Low mood",
   },
   "time-container": {
     moduleId: "time-container",
     title: "Time Container",
     description:
       "One block of focus with a soft start and a soft landing. The container does the holding.",
-    condition: "ADHD",
   },
   "priority-lens": {
     moduleId: "priority-lens",
     title: "Priority Lens",
     description:
       "When everything feels urgent: sort each task through one lens and get a list of three, never a wall.",
-    condition: "ADHD",
   },
   "energy-aware-week": {
     moduleId: "energy-aware-week",
     title: "Energy-Aware Week",
     description:
       "A week planned from your real capacity, not an ideal one. Move or drop anything, no penalty.",
-    condition: "Low mood",
   },
   "ride-the-wave": {
     moduleId: "ride-the-wave",
     title: "Ride the Wave",
     description:
       "A timed container for an urge or spike — something to do while it passes, not a plan for later.",
-    condition: "Urge or spike",
   },
   "card-deck": {
     moduleId: "card-deck",
     title: "Card Deck",
     description:
       "Swipe away unhelpful self-talk, keep the supportive. Sixty seconds, no typing.",
-    condition: "Racing thoughts",
   },
   "whats-blocking-me": {
     moduleId: "whats-blocking-me",
     title: "What's Blocking Me?",
     description:
       "Name the friction and get routed straight to the tool built for it.",
-    condition: "ADHD",
   },
   "grounding-54321": {
     moduleId: "grounding-54321",
     title: "5-4-3-2-1",
     description:
       "A guided sensory countdown — five things you see, down to one thing you taste.",
-    condition: "Anxiety",
   },
   "before-after": {
     moduleId: "before-after",
     title: "Before / After",
     description:
       "Rate your mood, do one small thing, rate it again — watch doing lift mood.",
-    condition: "Low mood",
   },
   "worry-sorter": {
     moduleId: "worry-sorter",
     title: "Worry Sorter",
     description:
       "You classify the worry — actionable, uncertain, or needs real help — and get routed accordingly.",
-    condition: "Racing thoughts",
   },
   "worry-window": {
     moduleId: "worry-window",
     title: "Worry Window",
     description:
       "Park a worry to a set time you choose, with something small to refocus on meanwhile.",
-    condition: "Racing thoughts",
   },
   "body-settle": {
     moduleId: "body-settle",
     title: "Body Settle",
     description:
       "Progressive muscle release — tense one group at a time, then let it all go.",
-    condition: "Anxiety",
   },
   "cool-the-storm": {
     moduleId: "cool-the-storm",
     title: "Cool the Storm",
     description:
       "Paced breathing, slow movement, and a long release — no physical shock, ever.",
-    condition: "Anxiety",
   },
   "focus-setup": {
     moduleId: "focus-setup",
     title: "Focus Setup",
     description:
       "An environment checklist before you start — friction removed before it's needed.",
-    condition: "ADHD",
   },
   "gentle-rhythm": {
     moduleId: "gentle-rhythm",
     title: "Gentle Rhythm",
     description:
       "Rebuild routine without a rigid schedule — pick anchors for today, no times attached.",
-    condition: "Low mood",
   },
   "problem-ladder": {
     moduleId: "problem-ladder",
     title: "Problem Ladder",
     description:
       "Vague dread, narrowed down: the whole thing → one piece → one doable move.",
-    condition: "Racing thoughts",
   },
 };
 

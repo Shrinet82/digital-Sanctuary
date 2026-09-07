@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
-import { MODULE_LIST } from "@/lib/modules";
+import { MODULE_LIST, getModule, groupLabel } from "@/lib/modules";
 import { recommend } from "@/lib/recommend";
 import type { CheckInState, Loudest, Want } from "@/lib/checkin";
 import { ModuleGrid } from "@/components/ModuleGrid";
@@ -21,6 +21,12 @@ const OUTCOME_COPY: Record<string, string> = {
   moved: "Moved",
   not_today: "Not today",
 };
+
+/** The state-based lane a recommended module belongs to (§10), for the subtitle pill. */
+function laneFor(moduleId: string): string {
+  const m = getModule(moduleId);
+  return m ? groupLabel(m.group) : "";
+}
 
 function timeAgo(iso: string) {
   const mins = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
@@ -157,7 +163,7 @@ export default async function DashboardPage() {
         </div>
         <div className="ds-card bg-gradient-to-br from-violet-soft via-coral-soft to-sand">
           <div className="flex gap-2 flex-wrap mb-3">
-            <span className="ds-pill bg-white">{reco.condition}</span>
+            <span className="ds-pill bg-white">{laneFor(reco.moduleId)}</span>
             <span className="ds-pill bg-mint text-[#0B5C41]">
               🧮 picked by transparent rules
             </span>
@@ -199,7 +205,7 @@ export default async function DashboardPage() {
             >
               <span>
                 <b className="block text-[15px]">{alt.title}</b>
-                <span className="text-sm text-ink-faint">{alt.condition}</span>
+                <span className="text-sm text-ink-faint">{laneFor(alt.moduleId)}</span>
               </span>
               <span className="text-violet-deep text-xl font-extrabold">→</span>
             </Link>

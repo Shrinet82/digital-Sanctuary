@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { saveCheckIn } from "@/app/actions/practice";
 import { recommend, type Recommendation } from "@/lib/recommend";
+import { getModule, groupLabel } from "@/lib/modules";
 import {
   DEFAULT_CONTEXT_CHIPS,
   LOUDEST_OPTIONS,
@@ -17,6 +18,12 @@ import {
 } from "@/lib/checkin";
 
 type Screen = 0 | 1 | 2 | 3;
+
+/** The state-based lane a recommended module belongs to (§10), for the subtitle pill. */
+function laneFor(moduleId: string): string {
+  const m = getModule(moduleId);
+  return m ? groupLabel(m.group) : "";
+}
 
 function Chip({
   active,
@@ -95,7 +102,7 @@ export function CheckInFlow() {
       <div>
         <div className="ds-card bg-gradient-to-br from-violet-soft via-coral-soft to-sand">
           <div className="flex gap-2 flex-wrap mb-3">
-            <span className="ds-pill bg-white">{result.condition}</span>
+            <span className="ds-pill bg-white">{laneFor(result.moduleId)}</span>
             <span className="ds-pill bg-mint text-[#0B5C41]">
               🧮 picked by transparent rules
             </span>
@@ -125,7 +132,7 @@ export function CheckInFlow() {
             >
               <span>
                 <b className="block text-[15px]">{alt.title}</b>
-                <span className="text-sm text-ink-faint">{alt.condition}</span>
+                <span className="text-sm text-ink-faint">{laneFor(alt.moduleId)}</span>
               </span>
               <span className="text-violet-deep text-xl font-extrabold">→</span>
             </Link>

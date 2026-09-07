@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
-import { MODULE_LIST, getModule } from "@/lib/modules";
+import { MODULE_LIST, getModule, groupLabel } from "@/lib/modules";
 import { getAnchors, getRecentContextLog, getVaultConsent } from "@/app/actions/vault";
 import { passcodeGateStatus } from "@/app/actions/passcode";
 import { PasscodeLock } from "@/components/PasscodeLock";
@@ -34,9 +34,10 @@ import { ProblemLadder } from "@/components/modules/ProblemLadder";
 import { ContextLog } from "@/components/modules/ContextLog";
 
 const GROUP_STYLE: Record<string, string> = {
-  anxiety: "bg-coral-soft text-[#B03A2E]",
+  right_now: "bg-coral-soft text-[#B03A2E]",
+  racing_thoughts: "bg-teal-soft text-[#0B5C41]",
   low_mood: "bg-sand text-[#8A5B00]",
-  adhd: "bg-violet-soft text-violet-deep",
+  cant_start: "bg-violet-soft text-violet-deep",
   substance: "bg-mint text-[#0B5C41]",
 };
 
@@ -119,7 +120,7 @@ export default async function ModulePage({
           <span
             className={`ds-pill uppercase tracking-wide ${GROUP_STYLE[meta.group]}`}
           >
-            {meta.condition}
+            {groupLabel(meta.group)}
           </span>
           {meta.vault && (
             <span className="ds-pill bg-surface-2">🔒 extra-private</span>
